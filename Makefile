@@ -4,18 +4,15 @@ OBJS = Methods.o Hashing.o VectorData.o Tools.o Euclidean.o
 OBJS2 = Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o
 
 # Executables
-lsh: lsh.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o
-	$(CC) -o lsh lsh.o $(OBJS) -O2
-
-cube: cube.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o
-	$(CC) -o cube cube.o $(OBJS) -O2
+search: search.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o
+	$(CC) -o search search.o $(OBJS) -O2
 
 cluster: cluster.o Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o
 	$(CC) -o cluster cluster.o $(OBJS2) -O2
 
 # Object files
-lsh.o: src/lsh.cpp
-	$(CC) $(CFLAGS) -c src/lsh.cpp
+search.o: src/search.cpp
+	$(CC) $(CFLAGS) -c src/search.cpp
 
 cube.o: src/cube.cpp
 	$(CC) $(CFLAGS) -c src/cube.cpp
@@ -44,4 +41,4 @@ Kmeans.o: src/Cluster/Kmeans.cpp
 .PHONY: clean
 
 clean:
-	rm -f lsh cube cluster *.o 
+	rm -f search cube cluster *.o 

@@ -3,7 +3,7 @@
 #include "../LSH/LshHashing.h"
 #include "../HyperCube/CubeHashing.h"
 #include "VectorData.h"
-
+#include "Curves.h"
 
 // Function that reads all the points from the input file and saves them in the appropriate data structures (LSH)
 void LSH_pre_process(string filename, int L)
@@ -107,7 +107,7 @@ void Cube_pre_process(string filename, int k)
 
 // Function that reads all the query points from the query file and executes the ANN and Range Search algorithms (LSH)
 // It also generates the output file with the results
-void lsh(string input, string output, int N, double R)
+void lsh(string input, string output, int N)
 {
     vector<double> q;
     
@@ -119,6 +119,10 @@ void lsh(string input, string output, int N, double R)
     if (inputFile)
     {
         string line;
+        auto tApproximateAverage = 0;
+        auto tTrueAverage = 0;
+        int counter = 0;
+        double statistics = 0;
 
         // Read every line of the file
         while (getline(inputFile, line))
@@ -147,36 +151,34 @@ void lsh(string input, string output, int N, double R)
             auto startRealDist = chrono::steady_clock::now();
             vector<pair<string, double>> bf =  vectorData->findRealDistBruteForce(q, N);
             auto endRealDist = chrono::steady_clock::now();
-            
-            // Find all the points within radius 'R' of 'q'
-            set<string> rs = LSH_hashTables->LSH_rangeSearch(q, R);
-            
+
+            tApproximateAverage += chrono::duration_cast<chrono::microseconds>(endLSH - startLSH).count();
+            tTrueAverage += chrono::duration_cast<chrono::microseconds>(endRealDist - startRealDist).count();
+
+            counter++;
+
             outputFile << "Query: " << id << endl;
+            outputFile << "Algorithm: LSH_Vector" << endl;
             
             // Write all the results in the output file
-            unsigned int j = 1;
-            for(unsigned int i = 0; i < nn.size(); i++)
-            {
-                outputFile << "Nearest neighbor-"<< j << ": " << nn[i].first << endl;
-                outputFile << "distanceLSH: "<< nn[i].second << endl;
-                outputFile << "distanceTrue: "<< bf[i].second << endl;
-                j++;
-            }
-            
-            outputFile << "tLSH: " << chrono::duration_cast<chrono::microseconds>(endLSH - startLSH).count() << " μs" << endl;
-            outputFile << "tTrue: " << chrono::duration_cast<chrono::microseconds>(endRealDist - startRealDist).count() << " μs" << endl;
-            
-            outputFile << "R-near neighbors:" << endl;
-            for(auto s : rs)
-            {
-                outputFile << s << endl;
-            }
+            outputFile << "Approximate Nearest neighbor: " << nn[0].first << endl;
+            outputFile << "True Nearest neighbor: "<< bf[0].first << endl;
+            outputFile << "distanceApproximate: "<< nn[0].second << endl;
+            outputFile << "distanceTrue: "<< bf[0].second << endl;
             outputFile << endl;
+            
+            statistics += nn[0].second - bf[0].second;
 
             delete[] buff;
             q.clear();
         }
-        
+        outputFile << "tApproximateAverage: " << tApproximateAverage / counter << " microseconds" << endl;
+        outputFile << "tTrueAverage: " <<  tTrueAverage / counter << " microseconds" << endl;
+        outputFile << "MAF: " <<  "Change this when you find what MAF is" << endl;
+
+        cout << "Average distance variation: " << statistics/counter << endl;
+
+            
         inputFile.close();
         outputFile.close();
     }
@@ -185,7 +187,7 @@ void lsh(string input, string output, int N, double R)
 
 // Function that reads all the query points from the query file and executes the ANN and Range Search algorithms (Hypercube)
 // It also generates the output file with the results
-void cube(string input, string output, int N, int k, double R, int maxPoints, int probes)
+void cube(string input, string output, int N, int k, int maxPoints, int probes)
 {
     vector<double> q;
 
@@ -197,6 +199,10 @@ void cube(string input, string output, int N, int k, double R, int maxPoints, in
     if (inputFile)
     {
         string line;
+        auto tApproximateAverage = 0;
+        auto tTrueAverage = 0;
+        int counter = 0;
+        double statistics = 0;
 
         // Read every line of the file
         while (getline(inputFile, line))
@@ -227,35 +233,34 @@ void cube(string input, string output, int N, int k, double R, int maxPoints, in
             vector<pair<string, double>> bf = vectorData->findRealDistBruteForce(q, N);
             auto endRealDist = chrono::steady_clock::now();
 
-            // Find all the points within radius 'R' of 'q'
-            vector<string> rs = C_hashTables->Cube_rangeSearch(q, k, R, maxPoints, probes);
+
+            tApproximateAverage += chrono::duration_cast<chrono::microseconds>(endCube - startCube).count();
+            tTrueAverage += chrono::duration_cast<chrono::microseconds>(endRealDist - startRealDist).count();
+
+            counter++;
 
             outputFile << "Query: " << id << endl;
-
+            outputFile << "Algorithm: Hypercube" << endl;
+            
             // Write all the results in the output file
-            unsigned int j = 1;
-            for (unsigned int i = 0; i < nn.size(); i++)
-            {
-                outputFile << "Nearest neighbor-" << j << ": " << nn[i].first << endl;
-                outputFile << "distanceHypercube: " << nn[i].second << endl;
-                outputFile << "distanceTrue: " << bf[i].second << endl;
-                j++;
-            }
-
-            outputFile << "tCube: " << chrono::duration_cast<chrono::microseconds>(endCube - startCube).count() << " μs" << endl;
-            outputFile << "tTrue: " << chrono::duration_cast<chrono::microseconds>(endRealDist - startRealDist).count() << " μs" << endl;
-
-            outputFile << "R-near neighbors:" << endl;
-            for (auto s : rs)
-            {
-                outputFile << s << endl;
-            }
+            outputFile << "Approximate Nearest neighbor: " << nn[0].first << endl;
+            outputFile << "True Nearest neighbor: "<< bf[0].first << endl;
+            outputFile << "distanceApproximate: "<< nn[0].second << endl;
+            outputFile << "distanceTrue: "<< bf[0].second << endl;
             outputFile << endl;
+            
+            statistics += nn[0].second - bf[0].second;
 
             delete[] buff;
             q.clear();
         }
         
+        outputFile << "tApproximateAverage: " << tApproximateAverage / counter << " microseconds" << endl;
+        outputFile << "tTrueAverage: " <<  tTrueAverage / counter << " microseconds" << endl;
+        outputFile << "MAF: " <<  "Change this when you find what MAF is" << endl;
+
+        cout << "Average distance variation: " << statistics/counter << endl;
+
         inputFile.close();
         outputFile.close();
     }
@@ -302,4 +307,54 @@ void Cluster_pre_process(string filename)
 
         inputFile.close();
     }
+}
+
+void CurvesLSH_pre_process(string filename, int L)
+{
+    
+    vector<double> p;
+    
+    // Open the input file
+    ifstream inputFile(filename);
+
+    if (inputFile)
+    {
+        string line;
+
+        // Read every line of the file
+        while (getline(inputFile, line))
+        {
+            char* buff = new char[line.length()+1];
+            strcpy(buff, line.c_str());
+            char* token = strtok(buff," \t");
+
+            char *id = token;  // This is the 'item_id' of the point
+
+            token = strtok(NULL," \t");
+
+            // Read all the coordinates of the point and store them in vector 'p'
+            while (token != NULL)
+            {
+                p.push_back(atoi(token));
+                token = strtok (NULL, " \t");
+            }
+
+            // Insert the 'item_id' of the point and its coordinates in the 'vectorData' list
+            // The 'VectorData::insert' function returns the address of the pair (id, p) that was just inserted in the list
+            //pair<string, vector<double>> * vectorDataPointer =  vectorData->insert(id, p);
+            
+            curves->insert(id, p);
+            pair<vector<double>, pair<string, vector<double>> *> cv = curves->gridCurveToVector( curves->size()-1 );
+            
+            // Insert the point in every hash table
+            for (int i = 0; i < L; i++) 
+            {
+                LSH_hashTables->LSH_insert(i, cv.first, cv.second);
+            }
+            
+            delete[] buff;
+            p.clear();
+        }
+
+        inputFile.close();
 }

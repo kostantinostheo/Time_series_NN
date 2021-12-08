@@ -20,10 +20,8 @@ class LSHHashTable
 		// Every bucket of each hash table contains an ID (ID(p) = r1*h1(p)+r2*h2(p)+... mod M) for the item that will be inserted
 		// Each bucket also contains a pointer to a pair (item_id, vector 'p') from the list of vectors in class 'VectorData'
         vector<vector<vector< pair<unsigned int, pair<string, vector<double>> * >>>> LSH_hashTables;
-
     
     public:
-    
         LSHHashTable(int L, unsigned int TableSize);
         void LSH_insert(int l, vector<double> &p, pair<string, vector<double>> * vectorPointer);
         vector<pair<string, double>> LSH_findNN(vector<double> &q, int N);
@@ -33,7 +31,7 @@ class LSHHashTable
 
 
 extern LSHHashTable *LSH_hashTables;
+void init_hashing_lsh(int k, int L, int d, unsigned int TableSize, double delta);
 void init_hashing_lsh(int k, int L, int d, unsigned int TableSize);
-
 #endif
 

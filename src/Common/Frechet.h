@@ -10,4 +10,3 @@ double FrechetDistance(vector<double> P, vector<double> Q);
 
 
 #endif /* FRECHET_H */
-

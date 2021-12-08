@@ -10,7 +10,7 @@ double FrechetDistance(const vector<double> & P, const vector<double> & Q, doubl
     size_t m1 = P.size();
     size_t m2 = P.size();
     
-    vector<vector<double>> dp_matrix();
+    vector<vector<double>> dp_matrix;
     
     dp_matrix.resize( m1 );       // m1 rows
     for (int i = 0; i < dp_matrix.size(); i++) {

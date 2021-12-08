@@ -1,0 +1,8 @@
+1. Initialize hashtables for lsh and curves. (init_hashing_lsh)
+2. Read input file and save to curves 
+3. Snapping
+    i.      We hash each curve and we take L gridCurves.
+    ii.     We transform each gridCurves to vectors by concatenate each x, y  next to each other.
+    iii.    After each vector creation we fill the vector with data to complete its length (if needed)
+    iv.     Every vector[L] is hashed with the same g[L]. L =1,2,3,...l
+    v.      LSH Booyah!! :( 

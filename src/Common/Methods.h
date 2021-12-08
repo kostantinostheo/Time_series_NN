@@ -12,9 +12,10 @@ using namespace std;
 
 void LSH_pre_process(string filename, int L);
 void Cube_pre_process(string filename, int k);
+void CurvesLSH_pre_process(string filename, int L);
 
-void lsh(string input, string output, int N, double R);
-void cube(string input, string output, int N, int k, double R, int maxPoints, int probes);
+void lsh(string input, string output, int N);
+void cube(string input, string output, int N, int k, int maxPoints, int probes);
 
 #endif
 

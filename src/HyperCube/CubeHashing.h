@@ -26,29 +26,6 @@ class CubeHashTable
         void Cube_insert(vector<double> &p, pair<string, vector<double>> * vectorPointer, int k);
         vector<pair<string, double>> Cube_findNN(vector<double> &q, int N, int k, int maxPoints, int probes);
         vector<string> Cube_rangeSearch(vector<double> &q, int k, double R, int maxPoints, int probes);
-
-        
-        void printHash( )
-        {
-            ofstream out("ids.txt");
-
-            for (int i = 0; i < L; i++)
-            {
-                out << "HashTable " << i << endl;
-                for (int j = 0; j < TableSize; j++)
-                {
-                    out << "Bucket " << j;
-                    for (int k = 0; k < C_hashTables[i][j].size(); k++)
-                    {
-                        out << " | Item_id: " << C_hashTables[i][j][k]->first;
-                    }
-                    out << endl;
-                }
-                out << "\n\n";
-            }
-
-            out.close();
-        }
 };
 
 

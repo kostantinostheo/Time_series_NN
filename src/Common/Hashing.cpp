@@ -2,6 +2,7 @@
 #include "../LSH/LshHashing.h"
 #include "../HyperCube/CubeHashing.h"
 #include "../Common/VectorData.h"
+#include "../Common/Curves.h"
 #include "Euclidean.h"
 #include "Tools.h"
 
@@ -28,10 +29,73 @@ vector< map<int, bool> > cubeMap;
 LSHHashTable *LSH_hashTables = NULL;
 CubeHashTable *C_hashTables = NULL;
 VectorData *vectorData;
+Curves *curves;
 
 using namespace std;
 
 // Function that is used to initialize all the necessary variables and data structures in order to use the hash functions and the hash tables (LSH)
+void init_hashing_lsh(int k, int L, int d, unsigned int TableSize, double delta)
+{
+    srand(time(NULL));
+    
+    window = 400;
+    int C = 1;
+    
+    LSH_hashTables = new LSHHashTable(L, TableSize);
+    vectorData = new VectorData();
+    curves = new Curves(delta, C, L);
+
+    // Initialize the 'r' vector that will be used by every amplified hash function 'g(p)'
+    {
+        default_random_engine generator(time(NULL));
+        uniform_int_distribution<int> distribution(1, INT32_MAX);
+
+        for (int i = 0; i < k; i++) {
+
+            r.push_back(distribution(generator));
+        }
+    }
+
+    // Initialize all the random 't' numbers that will be used by the hash functions 'h(p)'
+    {
+        default_random_engine generator(time(NULL));
+        uniform_real_distribution<double> distribution(0, window);
+
+        for (int i = 0; i < k*L; i++) {
+
+            t.push_back(distribution(generator));
+        }
+    }
+    
+    // Initialize the all the 'v' vectors that will be used by the hash functions 'h(p)'
+	// We need k*L vectors 'v', one for each hash function
+    {
+        default_random_engine generator(time(NULL));
+        normal_distribution<double> distribution(0.0, 1.0);
+
+        v.resize(k*L);
+
+        for (int i = 0; i < k*L; i++) {
+
+            for (int j = 0; j < d; j++) {
+                
+                v[i].push_back(distribution(generator));
+            }
+        }
+    }
+
+    // Initialize the 'g' vectors
+	// There will be L 'g' vectors in total and each one stores the number 'i' of the hi(p) functions that will be multiplied with the 'ri' numbers
+	// E.g k=4, L=5, g[0]=[0,1,3,2] then g1(p)=((r1*h1(p)+r2*h2(p)+r3*h4(p)+r4*h3(p)) mod M) mod TableSize
+    g.resize(L);
+    for (int i = 0; i < L; i++) {
+        
+        for (int j = 0; j < k; j++) {
+            
+            g[i].push_back(j + i*k);  // Insert that number in g[i]
+        }
+    }
+}
 void init_hashing_lsh(int k, int L, int d, unsigned int TableSize)
 {
     srand(time(NULL));
@@ -98,7 +162,7 @@ void init_hashing_cube(int k, int d, unsigned int TableSize)
 {
     srand(time(NULL));
     
-    window = 400;
+    window = 600;
     
     C_hashTables = new CubeHashTable(1, TableSize);
     vectorData = new VectorData();

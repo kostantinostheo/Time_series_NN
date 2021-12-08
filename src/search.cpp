@@ -1,10 +1,14 @@
 #include "./Common/Methods.h"
 #include "./Common/Tools.h"
 #include "./LSH/LshHashing.h"
+#include "./HyperCube/CubeHashing.h"
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <ctime>
+#include <cmath>
+
 
 using namespace std;
 
@@ -15,12 +19,14 @@ int main(int argc, char** argv)
     string out_file = "";
     string algorithm = "";
     string metric = "";
-    int k = 4;
+    int k = 10;
     int L = 5;
-    int M = 10;
-    int probes = 2;
+    int M = 50;
+    int probes = 20;
     double delta = 0;
 
+    srand(time(NULL));
+    
     if (argc > 15)
     {
         cout << "Error: Too many arguments" << endl;
@@ -79,6 +85,39 @@ int main(int argc, char** argv)
     cout << "outputFile: " << out_file << endl;
     cout << "queryFile: " << query_file << endl;
 
+    if (algorithm == "LSH")
+    {
+        cout << "Running LSH" << endl;
+        init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8);
+        LSH_pre_process(input_file, L);
+        lsh(query_file, out_file, 1);
+        DeallocateMemory();
+    }
+    else if (algorithm == "Hypercube")
+    {
+        cout << "Running Hypercube" << endl;
+        init_hashing_cube(k, dimension(input_file), pow(2,k));
+        Cube_pre_process(input_file, k);
+        cube(query_file, out_file, 1, k, M, probes);
+        DeallocateMemory();
+    }
+    else if (algorithm == "Frechet")
+    {
+        if(metric == "discrete")
+        {
+            init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8, delta);
+            CurvesLSH_pre_process(input_file, L);
+        }
+        else if(metric == "continuous")
+        {
+            //Handle continues
+        }
+        /*
+        1. 
+        */
+       
+    }
+    
     
 	
     return 0;

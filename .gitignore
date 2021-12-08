@@ -33,3 +33,7 @@
 
 # Ignore csv
 *.csv
+
+# Visual Studio
+*.vs
+*.vscode
