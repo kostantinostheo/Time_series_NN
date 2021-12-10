@@ -16,6 +16,7 @@ void CurvesLSH_pre_process(string filename, int L);
 
 void lsh(string input, string output, int N);
 void cube(string input, string output, int N, int k, int maxPoints, int probes);
+void lshCurves(string input, string output, int N, double freq);
 
 #endif
 

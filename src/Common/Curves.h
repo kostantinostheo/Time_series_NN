@@ -7,6 +7,7 @@
 #include <utility>
 #include <string>
 #include <random>
+#include <ctime>
 
 using namespace std;
 
@@ -18,21 +19,25 @@ class Curves {
         vector<pair<double,double>> tGrid; //Each available tx and ty for snapping
 
         list<pair<string, vector<double>>> curves;
-        list < pair < pair < string, vector<double> > &, vector<pair<double, double>>>> gridCurves;
+        list < pair < const pair < string, vector<double> > &, vector<pair<double, double>>>> gridCurves;
         
     public:
         Curves(double d,double freq, int L);
 
-        void insert(string id, vector<double> & p);
+        pair<string, vector<double>> * insert(string id, vector<double> & p);
         
         pair<string, vector<double>> & getCurve(unsigned int i);
         
         inline unsigned int size(){return curves.size();}
         
         // Fernei pisw  to epexergasmeno kai ena deikti apo to curves
-        pair<vector<double>, pair<string, vector<double>> *>  gridCurveToVector(unsigned int i);
+        vector<double>  gridCurveToVector(vector<pair<double, double>> &f);
         
-        vector<pair<double, double>> curveTogrid(vector<double> &y);
+        vector<pair<double, double>> curveTogrid(vector<double> &y, int j);
+        
+        void padVector(vector<double> &v);
+        
+        vector<pair<string, double>> findRealDistBruteForce( vector<double> &q, int N , double freq);
 };
 
 extern Curves *curves;

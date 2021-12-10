@@ -6,7 +6,7 @@
 
 using namespace std;
 
-double FrechetDistance(vector<double> P, vector<double> Q);
+double FrechetDistance(const vector<double> & P, const vector<double> & Q, double C);
 
 
 #endif /* FRECHET_H */

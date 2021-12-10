@@ -5,6 +5,7 @@
 #include "../Common/Curves.h"
 #include "Euclidean.h"
 #include "Tools.h"
+#include "Frechet.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -28,8 +29,8 @@ vector< map<int, bool> > cubeMap;
 
 LSHHashTable *LSH_hashTables = NULL;
 CubeHashTable *C_hashTables = NULL;
-VectorData *vectorData;
-Curves *curves;
+VectorData *vectorData = NULL;
+Curves *curves = NULL;
 
 using namespace std;
 
@@ -42,7 +43,6 @@ void init_hashing_lsh(int k, int L, int d, unsigned int TableSize, double delta)
     int C = 1;
     
     LSH_hashTables = new LSHHashTable(L, TableSize);
-    vectorData = new VectorData();
     curves = new Curves(delta, C, L);
 
     // Initialize the 'r' vector that will be used by every amplified hash function 'g(p)'
@@ -207,6 +207,7 @@ int h_func(const vector<double> &p, int i)
     // Calculate the dot product p*v
     for(int j=0; j<p.size(); j++)
     {
+        cout << "skata" << endl;
         dot_product += p[j] * v[i][j];
     }
     
@@ -260,11 +261,12 @@ CubeHashTable::CubeHashTable(int L, unsigned int TableSize)
 
 // Function that inserts an item in one of the hash tables
 void LSHHashTable::LSH_insert(int i, vector<double> &p, pair<string, vector<double>> * vectorPointer)
-{
+{   
     // Argument 'i' needs to be smaller than 'L' because the amplified hash function gi(p), 0<= i <=L, will be called
     if(i < this->L)
-    {
+    {   
         unsigned int hashValue = g_func(p, i);
+
         LSH_hashTables[i][hashValue % TableSize].push_back(make_pair(hashValue, vectorPointer));
     }
 }
@@ -320,6 +322,58 @@ vector<pair<string, double>> LSHHashTable::LSH_findNN(vector<double> &q, int N)
                 // If the 'item_id' of that point is not already in the map then insert the distance
                 if(b.find(id) == b.end())
                     b[id] = euclidean_distance(p, q);
+            }
+        }
+    }
+    
+    // Store all the values of the map 'b' in vector 'vb'
+    vector<pair<string, double>> vb;
+    for(auto x : b)
+    {
+        vb.push_back(make_pair(x.first, x.second));
+    }
+    
+    // Sort the vector 'vb' to find the shortest distances
+    sort(vb.begin(), vb.end(), sortbyDist);
+    
+    // Only keep the N shortest distances
+    if(vb.size() > N)
+        vb.resize(N);
+    
+    return vb;
+}
+
+vector<pair<string, double>> LSHHashTable::LSH_findCurvedNN(vector<double> &query, int N, double freq)
+{
+    map<string, double> b;
+   
+    
+    // For each hash table
+    for (int i = 0; i < L; i++) {
+        
+        // Process query curve
+        vector<pair<double, double>> processedQ = curves->curveTogrid( query, i);
+
+        vector<double> concatVec = curves->gridCurveToVector( processedQ );
+
+        curves->padVector( concatVec );
+        
+        
+        // Get the bucket that query 'concatVec' belongs in
+        unsigned int hashValue = g_func(concatVec, i);
+        
+        // For each item in the bucket
+        for(auto candidate : LSH_hashTables[i][hashValue % TableSize])
+        {
+            // If ID(p) = ID(q)
+            if (candidate.first == hashValue)
+            {
+                string id = candidate.second->first;  // Get the 'item_id' of the point
+                vector<double>& p = candidate.second->second;  // Get the coordinates of the point
+
+                // If the 'item_id' of that point is not already in the map then insert the distance
+                if(b.find(id) == b.end())
+                    b[id] = FrechetDistance (p, query, freq);
             }
         }
     }
@@ -515,11 +569,9 @@ vector<string> CubeHashTable::Cube_rangeSearch(vector<double> &q, int k, double 
 void DeallocateMemory()
 {
     delete vectorData;
-    
-    if (LSH_hashTables != NULL)
-	    delete LSH_hashTables;
-    if (C_hashTables != NULL)
-        delete C_hashTables;
+    delete LSH_hashTables;
+    delete C_hashTables;
+    delete curves;
 }
 
 //For Debug only

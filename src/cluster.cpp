@@ -14,16 +14,18 @@ int main(int argc, char** argv)
     string input_file = "";
     string conf_file = "";
     string out_file = "";
-    string method;
+    string update = "";
+	string assignment = "";
     bool complete = false;
+	bool silhouette = false;
     int num_clusters = 2;
-    int L = 1;
+    int L = 3;
     int num_hash = 4;
     int M = 10;
     int cube_dim = 3;
     int probes = 2;
 
-    if (argc > 11)
+    if (argc > 15)
     {
         cout << "Error: Too many arguments" << endl;
         exit(1);
@@ -41,12 +43,18 @@ int main(int argc, char** argv)
 
         else if (string(argv[i]) == "-o")
             out_file = argv[i + 1];
+		
+		else if (string(argv[i]) == "-update")
+            update = argv[i + 1];
+		
+		else if (string(argv[i]) == "-assignment")
+            assignment = argv[i + 1];
 
         else if (string(argv[i]) == "-complete")
             complete = true;
 
-        else if (string(argv[i]) == "-m")
-            method = argv[i + 1];
+        else if (string(argv[i]) == "-silhouette")
+            silhouette = true;
     }
 
     if (input_file == "" || conf_file == "" || out_file == "")
@@ -55,21 +63,21 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    readConfig(conf_file, num_clusters, L, num_hash, M, cube_dim, probes);
+    //readConfig(conf_file, num_clusters, L, num_hash, M, cube_dim, probes);
 
     cout << "inputFile: " << input_file << endl;
     cout << "outputFile: " << out_file << endl;
     cout << "confFile: " << conf_file << endl;
 
-    init_vectorData();
+    //init_vectorData();
     
-    Cluster_pre_process(input_file);
+    //Cluster_pre_process(input_file);
    
-    init_clusters(num_clusters);
+    //init_clusters(num_clusters);
     
-    cluster(out_file, complete);
+    //cluster(out_file, complete);
 
-    DeallocateMemoryClusters();
+    //DeallocateMemoryClusters();
 
     return 0;
 }

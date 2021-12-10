@@ -25,6 +25,7 @@ class LSHHashTable
         LSHHashTable(int L, unsigned int TableSize);
         void LSH_insert(int l, vector<double> &p, pair<string, vector<double>> * vectorPointer);
         vector<pair<string, double>> LSH_findNN(vector<double> &q, int N);
+        vector<pair<string, double>> LSH_findCurvedNN(vector<double> &q, int N, double freq);
         set<string> LSH_rangeSearch(vector<double> &q, double R);
         void printHash();
 };

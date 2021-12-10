@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     string out_file = "";
     string algorithm = "";
     string metric = "";
-    int k = 10;
+    int k = 4;
     int L = 5;
     int M = 50;
     int probes = 20;
@@ -105,16 +105,15 @@ int main(int argc, char** argv)
     {
         if(metric == "discrete")
         {
-            init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8, delta);
+            init_hashing_lsh(k, L, 2*dimension(input_file), count_file_lines(input_file)/8, delta);
             CurvesLSH_pre_process(input_file, L);
+            lshCurves( query_file, out_file, 1, 1.0);
+            DeallocateMemory();
         }
         else if(metric == "continuous")
         {
             //Handle continues
         }
-        /*
-        1. 
-        */
        
     }
     

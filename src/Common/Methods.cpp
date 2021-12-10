@@ -320,7 +320,7 @@ void CurvesLSH_pre_process(string filename, int L)
     if (inputFile)
     {
         string line;
-
+        cout << "Bika Curves Pre Proccess" << endl;
         // Read every line of the file
         while (getline(inputFile, line))
         {
@@ -335,7 +335,7 @@ void CurvesLSH_pre_process(string filename, int L)
             // Read all the coordinates of the point and store them in vector 'p'
             while (token != NULL)
             {
-                p.push_back(atoi(token));
+                p.push_back(atof(token));
                 token = strtok (NULL, " \t");
             }
 
@@ -343,13 +343,19 @@ void CurvesLSH_pre_process(string filename, int L)
             // The 'VectorData::insert' function returns the address of the pair (id, p) that was just inserted in the list
             //pair<string, vector<double>> * vectorDataPointer =  vectorData->insert(id, p);
             
-            curves->insert(id, p);
-            pair<vector<double>, pair<string, vector<double>> *> cv = curves->gridCurveToVector( curves->size()-1 );
+            pair<string, vector<double>> * curvePtr = curves->insert(id, p);
+
             
-            // Insert the point in every hash table
             for (int i = 0; i < L; i++) 
             {
-                LSH_hashTables->LSH_insert(i, cv.first, cv.second);
+                vector<pair<double, double>> processed = curves->curveTogrid( curvePtr->second, i);
+
+                vector<double> concatVec = curves->gridCurveToVector( processed );
+
+                curves->padVector( concatVec );
+
+                LSH_hashTables->LSH_insert(i, concatVec, curvePtr);
+                /* Segmentation here */
             }
             
             delete[] buff;
@@ -357,4 +363,96 @@ void CurvesLSH_pre_process(string filename, int L)
         }
 
         inputFile.close();
+    }
+}
+
+void lshCurves(string input, string output, int N, double freq)
+{
+    vector<double> q;
+    
+    // Open the input and output files
+    ifstream inputFile(input);
+    
+    ofstream outputFile(output);
+
+    if (inputFile)
+    {
+        string line;
+        auto tApproximateAverage = 0;
+        auto tTrueAverage = 0;
+        int counter = 0;
+        double statistics = 0;
+        double maf=0.0;
+
+        // Read every line of the file
+        while (getline(inputFile, line))
+        {
+            char* buff = new char[line.length()+1];
+            strcpy(buff, line.c_str());
+            char* token = strtok(buff," \t");
+
+            char *id = token;
+
+            token = strtok(NULL," \t");
+
+            // Read all the coordinates of the query and store them in vector 'q'
+            while (token != NULL)
+            {
+                q.push_back(atoi(token));
+                token = strtok (NULL, " \t");
+            }
+
+            // Find the N nearest neighbors using the ANN algorithm, their distance from 'q' and the time it takes to find them
+            auto startLSH = chrono::steady_clock::now();
+            vector<pair<string, double>> nn = LSH_hashTables->LSH_findCurvedNN (q, N, freq);
+            auto endLSH = chrono::steady_clock::now();
+
+            // Find the real distances of the N nearest neighbors from 'q' and the time it takes to find them
+            auto startRealDist = chrono::steady_clock::now();
+            vector<pair<string, double>> bf =  curves->findRealDistBruteForce(q, N, freq);
+            auto endRealDist = chrono::steady_clock::now();
+
+            tApproximateAverage += chrono::duration_cast<chrono::microseconds>(endLSH - startLSH).count();
+            tTrueAverage += chrono::duration_cast<chrono::microseconds>(endRealDist - startRealDist).count();
+
+            counter++;
+            if (nn.empty())
+            {
+                continue;
+            }
+            
+            outputFile << "Query: " << id << endl;
+            outputFile << "Algorithm: LSH_Frechet_Discrete" << endl;
+            
+            // Write all the results in the output file
+            if(!nn.empty())
+                outputFile << "Approximate Nearest neighbor: " << nn[0].first << endl;
+            else
+                outputFile << "Approximate Nearest neighbor: null" << endl;
+            
+            outputFile << "True Nearest neighbor: "<< bf[0].first << endl;
+            
+            if(!nn.empty())
+                outputFile << "distanceApproximate: "<< nn[0].second << endl;
+            else
+                outputFile << "distanceApproximate: null" << endl;
+
+            outputFile << "distanceTrue: "<< bf[0].second << endl;
+            outputFile << endl;
+            
+            statistics += nn[0].second - bf[0].second;
+
+            delete[] buff;
+            q.clear();
+        }
+        outputFile << "tApproximateAverage: " << tApproximateAverage / counter << " microseconds" << endl;
+        outputFile << "tTrueAverage: " <<  tTrueAverage / counter << " microseconds" << endl;
+        outputFile << "MAF: " << maf << endl;
+
+        cout << "Average distance variation: " << statistics/counter << endl;
+
+            
+        inputFile.close();
+        outputFile.close();
+    }
 }

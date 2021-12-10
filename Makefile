@@ -1,10 +1,10 @@
 CC=g++
 CFLAGS= -std=c++11
-OBJS = Methods.o Hashing.o VectorData.o Tools.o Euclidean.o 
+OBJS = Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o
 OBJS2 = Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o
 
 # Executables
-search: search.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o
+search: search.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o 
 	$(CC) -o search search.o $(OBJS) -O2
 
 cluster: cluster.o Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o
@@ -38,7 +38,13 @@ Euclidean.o: src/Common/Euclidean.cpp
 Kmeans.o: src/Cluster/Kmeans.cpp
 	$(CC) $(CFLAGS) -c src/Cluster/Kmeans.cpp
 
+Curves.o: src/Common/Curves.cpp
+	$(CC) $(CFLAGS) -c src/Common/Curves.cpp
+
+Frechet.o: src/Common/Frechet.cpp
+	$(CC) $(CFLAGS) -c src/Common/Frechet.cpp
+
 .PHONY: clean
 
 clean:
-	rm -f search cube cluster *.o 
+	rm -f search cluster *.o 
