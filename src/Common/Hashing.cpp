@@ -37,7 +37,7 @@ using namespace std;
 // Function that is used to initialize all the necessary variables and data structures in order to use the hash functions and the hash tables (LSH)
 void init_hashing_lsh(int k, int L, int d, unsigned int TableSize, double delta)
 {
-    srand(time(NULL));
+    //srand(time(NULL));
     
     window = 400;
     int C = 1;
@@ -77,7 +77,7 @@ void init_hashing_lsh(int k, int L, int d, unsigned int TableSize, double delta)
 
         for (int i = 0; i < k*L; i++) {
 
-            for (int j = 0; j < d; j++) {
+            for (int j = 0; j < 2*d; j++) {
                 
                 v[i].push_back(distribution(generator));
             }
@@ -207,7 +207,6 @@ int h_func(const vector<double> &p, int i)
     // Calculate the dot product p*v
     for(int j=0; j<p.size(); j++)
     {
-        cout << "skata" << endl;
         dot_product += p[j] * v[i][j];
     }
     
@@ -261,12 +260,11 @@ CubeHashTable::CubeHashTable(int L, unsigned int TableSize)
 
 // Function that inserts an item in one of the hash tables
 void LSHHashTable::LSH_insert(int i, vector<double> &p, pair<string, vector<double>> * vectorPointer)
-{   
+{
     // Argument 'i' needs to be smaller than 'L' because the amplified hash function gi(p), 0<= i <=L, will be called
     if(i < this->L)
-    {   
+    {
         unsigned int hashValue = g_func(p, i);
-
         LSH_hashTables[i][hashValue % TableSize].push_back(make_pair(hashValue, vectorPointer));
     }
 }

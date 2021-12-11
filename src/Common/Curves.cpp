@@ -69,7 +69,7 @@ vector<pair<double, double>> Curves::curveTogrid(vector<double> & y, int j)
         double tx = tGrid[j].first;
         double ty = tGrid[j].second;
 
-        double xi = floor(abs(0*frequency-tx)/delta + 0.5)*delta + tx;
+        double xi = floor((tx)/delta +0.5)*delta + tx;
         double yi = floor(abs(y[0]-ty)/delta +0.5)*delta + ty;
 
         proccesed.push_back( make_pair( xi, yi ) );

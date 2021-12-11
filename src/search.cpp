@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     int L = 5;
     int M = 50;
     int probes = 20;
-    double delta = 0;
+    double delta = 1;
 
     srand(time(NULL));
     
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
     {
         if(metric == "discrete")
         {
-            init_hashing_lsh(k, L, 2*dimension(input_file), count_file_lines(input_file)/8, delta);
+            init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8, delta);
             CurvesLSH_pre_process(input_file, L);
             lshCurves( query_file, out_file, 1, 1.0);
             DeallocateMemory();

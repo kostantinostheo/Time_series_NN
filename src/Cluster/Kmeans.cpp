@@ -99,6 +99,7 @@ void Clusters::updateClusters()
         
         for (int c = 0; c < centroids.size() ; c++) {
 
+            
             double dist = euclidean_distance(v.second, centroids[c]);
             
             if(dist < min) {
@@ -220,6 +221,7 @@ vector<double> Clusters::mean(int c)
             m[i] = 0.0;
         else
             m[i] = m[i] / clusters[c].size();
+        
     }
     return m;
 }
@@ -348,13 +350,13 @@ void cluster(string output, bool complete)
     // Find the first 'k' centroids with KMeans++
     clusters->KMeans();
 
-    clusters->printClusters();
+    //clusters->printClusters();
 
     // Using Lloyd's algorithm keep updating the centroids and assign the points to their nearest centroid
-    //clusters->Lloyd();
+    clusters->Lloyd();
 
     // Create the output file and write all the results inside
-    //clusters->Silhouette(output, complete);
+    clusters->Silhouette(output, complete);
 }
 
 void Clusters::printClusters()

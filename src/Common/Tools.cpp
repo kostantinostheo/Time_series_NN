@@ -41,7 +41,7 @@ int dimension(string filename)
 
     getline(infile, line);
 
-    dim = count(line.begin(), line.end(), ' ')-1;
+    dim = count(line.begin(), line.end(), '\t');
 
     infile.close();
 

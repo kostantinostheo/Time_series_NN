@@ -320,7 +320,7 @@ void CurvesLSH_pre_process(string filename, int L)
     if (inputFile)
     {
         string line;
-        cout << "Bika Curves Pre Proccess" << endl;
+
         // Read every line of the file
         while (getline(inputFile, line))
         {
@@ -344,18 +344,17 @@ void CurvesLSH_pre_process(string filename, int L)
             //pair<string, vector<double>> * vectorDataPointer =  vectorData->insert(id, p);
             
             pair<string, vector<double>> * curvePtr = curves->insert(id, p);
-
+            
             
             for (int i = 0; i < L; i++) 
             {
                 vector<pair<double, double>> processed = curves->curveTogrid( curvePtr->second, i);
-
+            
                 vector<double> concatVec = curves->gridCurveToVector( processed );
-
+                
                 curves->padVector( concatVec );
-
+                
                 LSH_hashTables->LSH_insert(i, concatVec, curvePtr);
-                /* Segmentation here */
             }
             
             delete[] buff;
@@ -383,6 +382,7 @@ void lshCurves(string input, string output, int N, double freq)
         int counter = 0;
         double statistics = 0;
         double maf=0.0;
+        double maxmaf=-1.0;
 
         // Read every line of the file
         while (getline(inputFile, line))
@@ -416,11 +416,7 @@ void lshCurves(string input, string output, int N, double freq)
             tTrueAverage += chrono::duration_cast<chrono::microseconds>(endRealDist - startRealDist).count();
 
             counter++;
-            if (nn.empty())
-            {
-                continue;
-            }
-            
+
             outputFile << "Query: " << id << endl;
             outputFile << "Algorithm: LSH_Frechet_Discrete" << endl;
             
@@ -432,22 +428,30 @@ void lshCurves(string input, string output, int N, double freq)
             
             outputFile << "True Nearest neighbor: "<< bf[0].first << endl;
             
-            if(!nn.empty())
+            if(!nn.empty()){
                 outputFile << "distanceApproximate: "<< nn[0].second << endl;
-            else
+                maf = nn[0].second / bf[0].second;
+                if( maf > maxmaf ) {
+                    
+                    maxmaf = maf;
+                }
+            }
+            else{
                 outputFile << "distanceApproximate: null" << endl;
+            }
 
             outputFile << "distanceTrue: "<< bf[0].second << endl;
             outputFile << endl;
             
-            statistics += nn[0].second - bf[0].second;
+            if(!nn.empty())
+                statistics += nn[0].second - bf[0].second;
 
             delete[] buff;
             q.clear();
         }
         outputFile << "tApproximateAverage: " << tApproximateAverage / counter << " microseconds" << endl;
         outputFile << "tTrueAverage: " <<  tTrueAverage / counter << " microseconds" << endl;
-        outputFile << "MAF: " << maf << endl;
+        outputFile << "MAF: " << maxmaf << endl;
 
         cout << "Average distance variation: " << statistics/counter << endl;
 

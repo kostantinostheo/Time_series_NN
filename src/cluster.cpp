@@ -63,21 +63,46 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    //readConfig(conf_file, num_clusters, L, num_hash, M, cube_dim, probes);
+    readConfig(conf_file, num_clusters, L, num_hash, M, cube_dim, probes);
 
     cout << "inputFile: " << input_file << endl;
     cout << "outputFile: " << out_file << endl;
     cout << "confFile: " << conf_file << endl;
 
-    //init_vectorData();
-    
-    //Cluster_pre_process(input_file);
-   
-    //init_clusters(num_clusters);
-    
-    //cluster(out_file, complete);
+    if (update == "Mean_Vector")
+    {
+        if (assignment == "Classic")
+        {
+            init_vectorData();
 
-    //DeallocateMemoryClusters();
+            Cluster_pre_process(input_file);
+
+            init_clusters(num_clusters);
+
+            cluster(out_file, complete);
+
+            DeallocateMemoryClusters();
+        }
+        else if (assignment == "LSH")
+        {
+
+        }
+        else if (assignment == "Hypercube")
+        {
+
+        }
+    }
+    else if (update == "Mean Frechet")
+    {
+        if (assignment == "Classic")
+        {
+
+        }
+        else if (assignment == "LSH_Frechet")
+        {
+
+        }
+    }
 
     return 0;
 }
