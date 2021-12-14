@@ -5,6 +5,7 @@
 #include "Curves.h"
 #include "Frechet.h"
 
+double filterThreshold = 0.5;
 
 Curves::Curves(double d, double freq, int L) {
     delta = d;
@@ -58,6 +59,30 @@ vector<double>  Curves::gridCurveToVector(vector<pair<double, double>> &f)
     }
 
     return concatVector;
+}
+
+vector<double> Curves::filtering(vector<double> timeSerie)
+{
+    vector<double> filtered;
+    
+    for (int i = 0; i < timeSerie.size(); i++) /* For any consecutive points in timeSerie Vector */
+    {
+        if (timeSerie[i+2] == NULL || timeSerie[i+1] == NULL) /* If we don't have 3 consecutive points to compare then */ 
+        {
+            filtered.push_back(timeSerie[i]); /* push the remaning values to the filtered vector */
+        }
+        else /* otherwise */
+        {   
+            if(timeSerie[i] - (timeSerie[i+1]) <= filterThreshold && (timeSerie[i+1]) - (timeSerie[i+2]) <= filterThreshold) /* if rule is true */
+            {
+                filtered.push_back(timeSerie[i]); /* push current value to filtered vector */
+                i++; /* and skip one position. (the value we wan't to "remove" */
+            }
+            else /* if rule is false */
+                filtered.push_back(timeSerie[i]); /* just push the current value to filtered vector and move to the next */
+        }
+    }
+    return filtered;
 }
 
 

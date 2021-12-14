@@ -34,7 +34,8 @@ class Curves {
         vector<double>  gridCurveToVector(vector<pair<double, double>> &f);
         
         vector<pair<double, double>> curveTogrid(vector<double> &y, int j);
-        
+        vector<double> filtering(vector<double> timeSerie);
+
         void padVector(vector<double> &v);
         
         vector<pair<string, double>> findRealDistBruteForce( vector<double> &q, int N , double freq);
