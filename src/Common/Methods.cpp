@@ -12,7 +12,6 @@ void LSH_pre_process(string filename, int L)
     
     // Open the input file
     ifstream inputFile(filename);
-
     if (inputFile)
     {
         string line;
@@ -31,7 +30,7 @@ void LSH_pre_process(string filename, int L)
             // Read all the coordinates of the point and store them in vector 'p'
             while (token != NULL)
             {
-                p.push_back(atoi(token));
+                p.push_back(atof(token));
                 token = strtok (NULL, " \t");
             }
 
@@ -39,6 +38,7 @@ void LSH_pre_process(string filename, int L)
             // The 'VectorData::insert' function returns the address of the pair (id, p) that was just inserted in the list
             pair<string, vector<double>> * vectorDataPointer =  vectorData->insert(id, p);
             
+                        
             // Insert the point in every hash table
             for (int i = 0; i < L; i++) {
 
@@ -82,7 +82,7 @@ void Cube_pre_process(string filename, int k)
             // Read all the coordinates of the point and store them in vector 'p'
             while (token != NULL)
             {
-                p.push_back(atoi(token));
+                p.push_back(atof(token));
                 token = strtok (NULL, " \t");
             }
 
@@ -123,6 +123,8 @@ void lsh(string input, string output, int N)
         auto tTrueAverage = 0;
         int counter = 0;
         double statistics = 0;
+        double maf=0.0;
+        double maxmaf=-1.0;
 
         // Read every line of the file
         while (getline(inputFile, line))
@@ -138,7 +140,7 @@ void lsh(string input, string output, int N)
             // Read all the coordinates of the query and store them in vector 'q'
             while (token != NULL)
             {
-                q.push_back(atoi(token));
+                q.push_back(atof(token));
                 token = strtok (NULL, " \t");
             }
 
@@ -161,20 +163,37 @@ void lsh(string input, string output, int N)
             outputFile << "Algorithm: LSH_Vector" << endl;
             
             // Write all the results in the output file
-            outputFile << "Approximate Nearest neighbor: " << nn[0].first << endl;
+            if(!nn.empty())
+                outputFile << "Approximate Nearest neighbor: " << nn[0].first << endl;
+            else
+                outputFile << "Approximate Nearest neighbor: null" << endl;
+            
             outputFile << "True Nearest neighbor: "<< bf[0].first << endl;
-            outputFile << "distanceApproximate: "<< nn[0].second << endl;
+            
+            if(!nn.empty()){
+                outputFile << "distanceApproximate: "<< nn[0].second << endl;
+                maf = nn[0].second / bf[0].second;
+                if( maf > maxmaf ) {
+                    
+                    maxmaf = maf;
+                }
+            }
+            else{
+                outputFile << "distanceApproximate: null" << endl;
+            }
+
             outputFile << "distanceTrue: "<< bf[0].second << endl;
             outputFile << endl;
             
-            statistics += nn[0].second - bf[0].second;
+            if(!nn.empty())
+                statistics += nn[0].second - bf[0].second;
 
             delete[] buff;
             q.clear();
         }
         outputFile << "tApproximateAverage: " << tApproximateAverage / counter << " microseconds" << endl;
         outputFile << "tTrueAverage: " <<  tTrueAverage / counter << " microseconds" << endl;
-        outputFile << "MAF: " <<  "Change this when you find what MAF is" << endl;
+        outputFile << "MAF: " << maxmaf << endl;
 
         cout << "Average distance variation: " << statistics/counter << endl;
 
@@ -203,6 +222,9 @@ void cube(string input, string output, int N, int k, int maxPoints, int probes)
         auto tTrueAverage = 0;
         int counter = 0;
         double statistics = 0;
+        double maf=0.0;
+        double maxmaf=-1.0;
+
 
         // Read every line of the file
         while (getline(inputFile, line))
@@ -219,7 +241,7 @@ void cube(string input, string output, int N, int k, int maxPoints, int probes)
             // Read all the coordinates of the query and store them in vector 'q'
             while (token != NULL)
             {
-                q.push_back(atoi(token));
+                q.push_back(atof(token));
                 token = strtok(NULL, " \t");
             }
 
@@ -243,13 +265,30 @@ void cube(string input, string output, int N, int k, int maxPoints, int probes)
             outputFile << "Algorithm: Hypercube" << endl;
             
             // Write all the results in the output file
-            outputFile << "Approximate Nearest neighbor: " << nn[0].first << endl;
+            if(!nn.empty())
+                outputFile << "Approximate Nearest neighbor: " << nn[0].first << endl;
+            else
+                outputFile << "Approximate Nearest neighbor: null" << endl;
+            
             outputFile << "True Nearest neighbor: "<< bf[0].first << endl;
-            outputFile << "distanceApproximate: "<< nn[0].second << endl;
+            
+            if(!nn.empty()){
+                outputFile << "distanceApproximate: "<< nn[0].second << endl;
+                maf = nn[0].second / bf[0].second;
+                if( maf > maxmaf ) {
+                    
+                    maxmaf = maf;
+                }
+            }
+            else{
+                outputFile << "distanceApproximate: null" << endl;
+            }
+
             outputFile << "distanceTrue: "<< bf[0].second << endl;
             outputFile << endl;
             
-            statistics += nn[0].second - bf[0].second;
+            if(!nn.empty())
+                statistics += nn[0].second - bf[0].second;
 
             delete[] buff;
             q.clear();
@@ -257,7 +296,7 @@ void cube(string input, string output, int N, int k, int maxPoints, int probes)
         
         outputFile << "tApproximateAverage: " << tApproximateAverage / counter << " microseconds" << endl;
         outputFile << "tTrueAverage: " <<  tTrueAverage / counter << " microseconds" << endl;
-        outputFile << "MAF: " <<  "Change this when you find what MAF is" << endl;
+        outputFile << "MAF: " <<  maxmaf << endl;
 
         cout << "Average distance variation: " << statistics/counter << endl;
 
@@ -293,7 +332,7 @@ void Cluster_pre_process(string filename)
             // Read all the coordinates of the point and store them in vector 'p'
             while (token != NULL)
             {
-                p.push_back(atoi(token));
+                p.push_back(atof(token));
                 token = strtok (NULL, " \t");
             }
 
@@ -398,7 +437,7 @@ void lshCurves(string input, string output, int N, double freq)
             // Read all the coordinates of the query and store them in vector 'q'
             while (token != NULL)
             {
-                q.push_back(atoi(token));
+                q.push_back(atof(token));
                 token = strtok (NULL, " \t");
             }
 

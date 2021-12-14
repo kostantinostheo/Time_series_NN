@@ -101,10 +101,10 @@ void init_hashing_lsh(int k, int L, int d, unsigned int TableSize)
     srand(time(NULL));
     
     window = 400;
-    
+
     LSH_hashTables = new LSHHashTable(L, TableSize);
     vectorData = new VectorData();
-
+      
     // Initialize the 'r' vector that will be used by every amplified hash function 'g(p)'
     {
         default_random_engine generator(time(NULL));
@@ -155,6 +155,7 @@ void init_hashing_lsh(int k, int L, int d, unsigned int TableSize)
             g[i].push_back(j + i*k);  // Insert that number in g[i]
         }
     }
+
 }
 
 // Function that is used to initialize all the necessary variables and data structures in order to use the hash functions and the hash table (Hypercube)
@@ -162,7 +163,7 @@ void init_hashing_cube(int k, int d, unsigned int TableSize)
 {
     srand(time(NULL));
     
-    window = 600;
+    window = 400;
     
     C_hashTables = new CubeHashTable(1, TableSize);
     vectorData = new VectorData();

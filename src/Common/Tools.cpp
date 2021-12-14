@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "Tools.h"
+#include <iostream>
 
 // Function that is given as an argument to the 'sort' function in order to sort a vector that contains pairs
 bool sortbyDist(const pair<string, double> &a, const pair<string, double> &b)
@@ -62,5 +63,6 @@ int count_file_lines(string filename)
         }
     }
     infile.close();
+
     return count;
 }
