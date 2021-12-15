@@ -7,12 +7,18 @@ OBJS2 = Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o
 search: search.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o 
 	$(CC) -o search search.o $(OBJS) -O2
 
+test_unit: test_unit.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o 
+	$(CC) -o test_unit test_unit.o $(OBJS)
+
 cluster: cluster.o Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o Frechet.o Curves.o
 	$(CC) -o cluster cluster.o $(OBJS2) Frechet.o Curves.o -O2
 
 # Object files
 search.o: src/search.cpp
 	$(CC) $(CFLAGS) -c src/search.cpp
+
+test_unit.o: tests/test_unit.cpp
+	$(CC) $(CFLAGS) -c tests/test_unit.cpp
 
 cube.o: src/cube.cpp
 	$(CC) $(CFLAGS) -c src/cube.cpp
@@ -47,4 +53,4 @@ Frechet.o: src/Common/Frechet.cpp
 .PHONY: clean
 
 clean:
-	rm -f search cluster *.o 
+	rm -f test_unit search cluster *.o 
