@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// Class that stores the curves from the input file
 class Curves {
 
     private:
@@ -18,7 +19,7 @@ class Curves {
         double frequency;
         vector<pair<double,double>> tGrid; //Each available tx and ty for snapping
 
-        list<pair<string, vector<double>>> curves;
+        list<pair<string, vector<double>>> curves;  // Curves from the input file
         list < pair < const pair < string, vector<double> > &, vector<pair<double, double>>>> gridCurves;
         
     public:
@@ -30,12 +31,12 @@ class Curves {
         
         inline unsigned int size(){return curves.size();}
         
-        // Fernei pisw  to epexergasmeno kai ena deikti apo to curves
         vector<double>  gridCurveToVector(vector<pair<double, double>> &f);
         
         vector<pair<double, double>> curveTogrid(vector<double> &y, int j);
         
         vector<double> filtering(vector<double> timeSerie);
+
         vector<double> minimaxima(vector<double> timeSerie);
 
         void padVector(vector<double> &v);
@@ -45,5 +46,5 @@ class Curves {
 
 extern Curves *curves;
 
-#endif /* CURVES_H */
+#endif
 

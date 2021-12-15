@@ -29,7 +29,7 @@ class Clusters
         bool updateCentroids();
         int getSecondClosestCentroid(vector<double>& p, int c);
         double avgDistanceBetweenPoints(vector<double>& p, int c);
-        void Silhouette(string filename, bool complete);
+        void Silhouette(string filename, bool complete, bool silhouette);
         void printClusters();
 };
 
@@ -40,7 +40,7 @@ void init_vectorData();
 void init_clusters(int k);
 void Cluster_pre_process(string filename);
 void DeallocateMemoryClusters();
-void cluster(string output, bool complete);
+void cluster(string output, bool complete, bool silhouette);
 
 #endif
 

@@ -63,6 +63,7 @@ void init_clusters(int k)
     clust = new Clusters(k);
 }
 
+// Constructor of class 'Clusters'
 Clusters::Clusters(int k)
 {
     this->k = k;
@@ -71,13 +72,17 @@ Clusters::Clusters(int k)
     
     unsigned int random_point = rand() % vectorData->size();
     
+    // Get a random point from the list of points
     vector<double> c = vectorData->get(random_point).second;
     
+    // This random point will be the first centroid
     centroids.push_back(c);
 }
 
+// Function that performs KMeans++ initialization
 void Clusters::KMeans()
 {
+    // Find the initial centroids
     for (int i = 0; i < k-1; i++) {
         
         updateClusters();
@@ -85,12 +90,15 @@ void Clusters::KMeans()
     }
 }
 
+// Function that finds the closest centroid for every point in the dataset
+// and assigns the points to the right cluster
 void Clusters::updateClusters()
 {
     clusters.clear();
     clusters.resize(k);
     int i = 0;
     
+    // For every point find the closest centroid
     for(auto &v : vectorData->getBegin())
     {
         int newC = -1;
@@ -106,17 +114,20 @@ void Clusters::updateClusters()
             }
         }
         
+        // Assign the point to this cluster
         clusters[newC].push_back(&(v));
     }
 }
 
+// Function that finds a new centroid during KMeans++
 void Clusters::chooseNewCentroid()
 {
     vector<double> sums;
     vector<vector<double>> nonCentroidPoints;
-    sums.push_back(0);
+    sums.push_back(0);  // Partial sums P(r)
     int count = 0;
     
+    // For every non-centroid point
     for(auto v : vectorData->getBegin())
     {
         count++;
@@ -124,6 +135,7 @@ void Clusters::chooseNewCentroid()
         double max = 0;
         double min = INT32_MAX;
         
+        // Find the minimum and maximum distance to some centroids
         for (int c = 0; c < centroids.size(); c++) {
 
             dist = euclidean_distance(v.second, centroids[c]);
@@ -143,15 +155,21 @@ void Clusters::chooseNewCentroid()
         if(min == INT32_MAX)
             continue;
         
+        // Get the normalized D(i)^2
         double di = pow(min / max, 2.0);
+
+        // Add D(i) and the previous partial sum and store it
         sums.push_back(sums.back() + di);
+
         nonCentroidPoints.push_back(v.second);
     }
     
+    // Find a uniformly distributed float x in [0, P(n-t)]
     default_random_engine generator(time(NULL));
     uniform_real_distribution<double> distribution(0, sums.back());
     double x = distribution(generator);
     
+    // Find the right index 'r' that satisfies the conditions below
     unsigned int r = 0;
     while(r < sums.size()){
         
@@ -168,6 +186,7 @@ void Clusters::chooseNewCentroid()
     centroids.push_back(c);
 }
 
+// Function that performs Lloyd's assignment
 void Clusters::Lloyd()
 {
     bool b;
@@ -180,10 +199,12 @@ void Clusters::Lloyd()
     } while(!b);
 }
 
+// Function that finds better centroids by calculating a mean vector per cluster
 bool Clusters::updateCentroids()
 {
     vector<double> newDist;
 
+    // For every cluster find the mean vector and make that the new centroid
     for (int i = 0; i < centroids.size(); i++) {
         vector<double> m = mean(i);
         double dist = euclidean_distance(centroids[i], m);
@@ -191,6 +212,7 @@ bool Clusters::updateCentroids()
         newDist.push_back(dist);
     }
     
+    // If every old centroid has a distance less than 'STOP' from the new centroids then Lloyd's assignment ends
     for (auto d : newDist) {
 
         if(d > STOP)
@@ -200,6 +222,7 @@ bool Clusters::updateCentroids()
     return true;
 }
 
+// Function that finds the mean vector of a specific cluster
 vector<double> Clusters::mean(int c)
 {    
     vector<double> m = centroids[c];
@@ -263,7 +286,8 @@ double Clusters::avgDistanceBetweenPoints(vector<double>& p, int c)
     return (dist / clusters[c].size());
 }
 
-void Clusters::Silhouette(string filename, bool complete)
+// Function that writes all the results in a file
+void Clusters::Silhouette(string filename, bool complete, bool silhouette)
 {
     double ai = 0.0, bi = 0.0;
     unsigned int allPoints = 0;
@@ -312,16 +336,21 @@ void Clusters::Silhouette(string filename, bool complete)
 
         outputFile << "]}" << endl;
     }
+    outputFile << endl;
 
-    outputFile << "Silhouette: [";
-    for (int i = 0; i < this->k; i++)
+    if (silhouette == true)
     {
-        if (i < this->k - 1)
-            outputFile << si[i] << ", ";
-        else
-            outputFile << si[i];
+        outputFile << "Silhouette: [";
+        for (int i = 0; i < allPoints+1; i++)
+        {
+            if (i < allPoints)
+                outputFile << si[i] << ", ";
+            else
+                outputFile << si[i];
+        }
+        outputFile << "]" << endl;
+        outputFile << endl;
     }
-    outputFile << "]" << endl;
 
     if (complete == true)
     {
@@ -345,7 +374,7 @@ void Clusters::Silhouette(string filename, bool complete)
 
 // Function that creates 'k' clusters and assigns each point to a cluster. Lloyd's algorithm has been implemented
 // It also generates the output file with the results
-void cluster(string output, bool complete)
+void cluster(string output, bool complete, bool silhouette)
 {
     vector<double> si;
 
@@ -355,10 +384,8 @@ void cluster(string output, bool complete)
     // Using Lloyd's algorithm keep updating the centroids and assign the points to their nearest centroid
     clust->Lloyd();
 
-    clust->printClusters();
-
     // Create the output file and write all the results inside
-    clust->Silhouette(output, complete);
+    clust->Silhouette(output, complete, silhouette);
 }
 
 void Clusters::printClusters()
