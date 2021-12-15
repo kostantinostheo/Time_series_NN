@@ -51,8 +51,6 @@ void LSH_pre_process(string filename, int L)
 
         inputFile.close();
     }
-    //For Debug only
-    //LSH_hashTables->printHash();
 }
 
 
@@ -99,9 +97,6 @@ void Cube_pre_process(string filename, int k)
 
         inputFile.close();
     }
-    
-    //For Debug only
-    //C_hashTables->printHash();
 }
 
 
@@ -350,9 +345,9 @@ void Cluster_pre_process(string filename)
     }
 }
 
+// Function that reads all the points from the input file and saves them in the appropriate data structures (LSH_Frechet)
 void CurvesLSH_pre_process(string filename, int L)
 {
-    
     vector<double> p;
     
     // Open the input file
@@ -373,28 +368,28 @@ void CurvesLSH_pre_process(string filename, int L)
 
             token = strtok(NULL," \t");
 
-            // Read all the coordinates of the point and store them in vector 'p'
+            // Read all the coordinates of the curve and store them in vector 'p'
             while (token != NULL)
             {
                 p.push_back(atof(token));
                 token = strtok (NULL, " \t");
             }
 
-            // Insert the 'item_id' of the point and its coordinates in the 'vectorData' list
-            // The 'VectorData::insert' function returns the address of the pair (id, p) that was just inserted in the list
-            //pair<string, vector<double>> * vectorDataPointer =  vectorData->insert(id, p);
-            
+            // Insert the 'item_id' of the curve and its coordinates in the 'curves' object
             pair<string, vector<double>> * curvePtr = curves->insert(id, p);
-            
             
             for (int i = 0; i < L; i++) 
             {
-                vector<pair<double, double>> processed = curves->curveTogrid( curvePtr->second, i);
-            
-                vector<double> concatVec = curves->gridCurveToVector( processed );
+                // Map the curve to a grid and get the new grid curve
+                vector<pair<double, double>> processed = curves->curveTogrid(curvePtr->second, i);
                 
-                curves->padVector( concatVec );
+                // Concatenate the coordinates of the grid curve and get the vector
+                vector<double> concatVec = curves->gridCurveToVector(processed);
                 
+                // Pad the vector
+                curves->padVector(concatVec);
+                
+                // Insert the vector in one of the LSH hashtables
                 LSH_hashTables->LSH_insert(i, concatVec, curvePtr);
             }
             
@@ -406,6 +401,8 @@ void CurvesLSH_pre_process(string filename, int L)
     }
 }
 
+// Function that reads all the query points from the query file and executes the ANN algorithm (LSH_Frechet)
+// It also generates the output file with the results
 void lshCurves(string input, string output, int N, double freq)
 {
     vector<double> q;
@@ -443,12 +440,12 @@ void lshCurves(string input, string output, int N, double freq)
                 token = strtok (NULL, " \t");
             }
 
-            // Find the N nearest neighbors using the ANN algorithm, their distance from 'q' and the time it takes to find them
+            // Find the N nearest neighbors using the ANN algorithm, their Frechet distance from 'q' and the time it takes to find them
             auto startLSH = chrono::steady_clock::now();
             vector<pair<string, double>> nn = LSH_hashTables->LSH_findCurvedNN (q, N, freq);
             auto endLSH = chrono::steady_clock::now();
 
-            // Find the real distances of the N nearest neighbors from 'q' and the time it takes to find them
+            // Find the real Frechet distances of the N nearest neighbors from 'q' and the time it takes to find them
             auto startRealDist = chrono::steady_clock::now();
             vector<pair<string, double>> bf =  curves->findRealDistBruteForce(q, N, freq);
             auto endRealDist = chrono::steady_clock::now();

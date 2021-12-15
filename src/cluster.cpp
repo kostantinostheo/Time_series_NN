@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 
             init_clusters(num_clusters);
 
-            cluster(out_file, complete);
+            cluster(out_file, complete, silhouette);
 
             DeallocateMemoryClusters();
         }
