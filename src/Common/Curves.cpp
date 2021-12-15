@@ -5,6 +5,7 @@
 #include "Curves.h"
 #include "Frechet.h"
 
+double filterThreshold = 0.5;
 
 Curves::Curves(double d, double freq, int L) {
     delta = d;
@@ -60,6 +61,57 @@ vector<double>  Curves::gridCurveToVector(vector<pair<double, double>> &f)
     return concatVector;
 }
 
+vector<double> Curves::filtering(vector<double> timeSerie)
+{
+    vector<double> filtered;
+    
+    for (int i = 0; i < timeSerie.size(); i++)
+    {
+        if (i == timeSerie.size()-1 || i == timeSerie.size()-2)
+        {
+            filtered.push_back(timeSerie[i]);
+        }
+        else
+        {
+            if(abs(timeSerie[i] - timeSerie[i+1]) < filterThreshold && abs(timeSerie[i+1] - timeSerie[i+2]) < filterThreshold)
+            {
+                filtered.push_back(timeSerie[i]);
+                i++;
+            }
+            else
+                filtered.push_back(timeSerie[i]);
+        }
+    }
+
+    return filtered;
+}
+
+vector<double> Curves::minimaxima(vector<double> timeSerie)
+{
+    vector<double> super_filtered;
+    double min, max = 0.0;
+
+    super_filtered.push_back(timeSerie[0]); 
+
+    for (int i = 1; i < timeSerie.size()-1; i++)
+    {
+        min = timeSerie[i-1];
+        max = timeSerie[i+1];
+        if(timeSerie[i-1] > timeSerie[i+1])
+        {
+            max = timeSerie[i-1];
+            min = timeSerie[i+1];
+        }
+        
+        if(timeSerie[i] > min && timeSerie[i] < max)
+            continue;
+        else   
+            super_filtered.push_back(timeSerie[i]);
+    }
+
+    super_filtered.push_back(timeSerie[timeSerie.size()]);
+
+}
 
 vector<pair<double, double>> Curves::curveTogrid(vector<double> & y, int j)
 {
