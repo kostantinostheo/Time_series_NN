@@ -335,6 +335,8 @@ void Cluster_pre_process(string filename)
                 p.push_back(atof(token));
                 token = strtok (NULL, " \t");
             }
+			
+			p.pop_back();
 
             // Insert the 'item_id' of the point and its coordinates in the 'vectorData' list
             // The 'VectorData::insert' function returns the address of the pair (id, p) that was just inserted in the list
