@@ -1,13 +1,13 @@
 CC=g++
 CFLAGS= -std=c++11
-OBJS = Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o
+OBJS = Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o #config.o curve.o frechet.o interval.o point.o simplification.o
 OBJS2 = Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o
 
 # Executables
-search: search.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o 
+search: search.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o #config.o curve.o frechet.o interval.o point.o simplification.o
 	$(CC) -o search search.o $(OBJS) -O2
 
-test_unit: test_unit.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o 
+test_unit: test_unit.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o #config.o curve.o frechet.o interval.o point.o simplification.o
 	$(CC) -o test_unit test_unit.o $(OBJS)
 
 cluster: cluster.o Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o Frechet.o Curves.o
@@ -49,6 +49,25 @@ Curves.o: src/Common/Curves.cpp
 
 Frechet.o: src/Common/Frechet.cpp
 	$(CC) $(CFLAGS) -c src/Common/Frechet.cpp
+
+# Object files for fred Continues Frechet
+config.o: src/fred/src/config.cpp
+	$(CC) $(CFLAGS) -c src/fred/src/config.cpp
+
+curve.o: src/fred/src/curve.cpp
+	$(CC) $(CFLAGS) -c src/fred/src/curve.cpp
+
+frechet.o: src/fred/src/frechet.cpp
+	$(CC) $(CFLAGS) -c src/fred/src/frechet.cpp
+
+interval.o: src/fred/src/interval.cpp
+	$(CC) $(CFLAGS) -c src/fred/src/interval.cpp
+
+point.o: src/fred/src/point.cpp
+	$(CC) $(CFLAGS) -c src/fred/src/point.cpp
+
+simplification.o: src/fred/src/simplification.cpp
+	$(CC) $(CFLAGS) -c src/fred/src/simplification.cpp
 
 .PHONY: clean
 

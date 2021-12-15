@@ -114,6 +114,7 @@ vector<double> Curves::minimaxima(vector<double> timeSerie)
 
     super_filtered.push_back(timeSerie[timeSerie.size()]);
 
+    return super_filtered;
 }
 
 // Function that maps a curve to a grid
