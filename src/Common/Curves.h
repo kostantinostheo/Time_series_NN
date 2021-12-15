@@ -36,7 +36,7 @@ class Curves {
         vector<pair<double, double>> curveTogrid(vector<double> &y, int j);
         
         vector<double> filtering(vector<double> timeSerie);
-        vector<double> Curves::minimaxima(vector<double> timeSerie);
+        vector<double> minimaxima(vector<double> timeSerie);
 
         void padVector(vector<double> &v);
         

@@ -111,6 +111,7 @@ vector<double> Curves::minimaxima(vector<double> timeSerie)
 
     super_filtered.push_back(timeSerie[timeSerie.size()]);
 
+    return super_filtered;
 }
 
 vector<pair<double, double>> Curves::curveTogrid(vector<double> & y, int j)
