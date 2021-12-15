@@ -8,9 +8,9 @@
 
 using namespace std;
 
-#define STOP 20
+#define STOP 10
 
-Clusters *clusters;
+Clusters *clust;
 
 // Function that reads the configuration file
 void readConfig(string filename, int& num_clusters, int& L, int& num_hash, int& M, int& cube_dim, int& probes)
@@ -54,15 +54,13 @@ void readConfig(string filename, int& num_clusters, int& L, int& num_hash, int& 
 // Function that initializes creates the data structure that stores all the points
 void init_vectorData()
 {
-    srand(time(NULL));
-    
     vectorData = new VectorData();
 }
 
 // Function that creates the data structure that stores all the clusters and centroids
 void init_clusters(int k)
 {
-    clusters = new Clusters(k);
+    clust = new Clusters(k);
 }
 
 Clusters::Clusters(int k)
@@ -91,15 +89,15 @@ void Clusters::updateClusters()
 {
     clusters.clear();
     clusters.resize(k);
+    int i = 0;
     
-    for(auto v : vectorData->getBegin())
+    for(auto &v : vectorData->getBegin())
     {
         int newC = -1;
         double min = INT32_MAX;
         
         for (int c = 0; c < centroids.size() ; c++) {
 
-            
             double dist = euclidean_distance(v.second, centroids[c]);
             
             if(dist < min) {
@@ -107,6 +105,7 @@ void Clusters::updateClusters()
                 newC = c;
             }
         }
+        
         clusters[newC].push_back(&(v));
     }
 }
@@ -212,8 +211,6 @@ vector<double> Clusters::mean(int c)
         
         for( auto vec : clusters[c] ) {
             temp = vec->second;
-            if (temp.empty() == true)
-                cout << "1" << endl;
             m[i] = m[i] + temp[i];
         }
         
@@ -227,13 +224,18 @@ vector<double> Clusters::mean(int c)
 }
 
 // Function that returns the second closest centroid of a point
-int Clusters::getSecondClosestCentroid(vector<double>& p)
+int Clusters::getSecondClosestCentroid(vector<double>& p, int c)
 {
     double min = INT32_MAX, dist = 0;
-    int c = 0;
+    int secondClosest = 0;
 
     for (int i = 0; i < centroids.size(); i++)
     {
+        // If this is the closest centroid then skip it
+        // We need the second closest centroid
+        if (i == c)
+            continue;
+
         dist = euclidean_distance(p, centroids[i]);
 
         if (dist == 0)
@@ -242,11 +244,11 @@ int Clusters::getSecondClosestCentroid(vector<double>& p)
         if (dist < min)
         {
             min = dist;
-            c = i;
+            secondClosest = i;
         }
     }
 
-    return c;
+    return secondClosest;
 }
 
 // Function that finds the average distance of a point to points in the same cluster or another cluster
@@ -258,7 +260,7 @@ double Clusters::avgDistanceBetweenPoints(vector<double>& p, int c)
         dist += euclidean_distance(p, clusters[c][i]->second);
     }
 
-    return (dist / (clusters[c].size()-1));
+    return (dist / clusters[c].size());
 }
 
 void Clusters::Silhouette(string filename, bool complete)
@@ -274,7 +276,7 @@ void Clusters::Silhouette(string filename, bool complete)
         for (int j = 0; j < clusters[i].size(); j++)
         {
             ai = avgDistanceBetweenPoints(clusters[i][j]->second, i);
-            int secondClosest = getSecondClosestCentroid(clusters[i][j]->second);
+            int secondClosest = getSecondClosestCentroid(clusters[i][j]->second, i);
             bi = avgDistanceBetweenPoints(clusters[i][j]->second, secondClosest);
             sil += (bi - ai) / max(ai, bi);
         }
@@ -348,37 +350,36 @@ void cluster(string output, bool complete)
     vector<double> si;
 
     // Find the first 'k' centroids with KMeans++
-    clusters->KMeans();
-
-    //clusters->printClusters();
+    clust->KMeans();
 
     // Using Lloyd's algorithm keep updating the centroids and assign the points to their nearest centroid
-    clusters->Lloyd();
+    clust->Lloyd();
+
+    clust->printClusters();
 
     // Create the output file and write all the results inside
-    clusters->Silhouette(output, complete);
+    clust->Silhouette(output, complete);
 }
 
 void Clusters::printClusters()
 {
     ofstream out("clust.txt");
-    cout << centroids.size() << endl;
 
     for (int i = 0; i < centroids.size(); i++)
     {
         out << "CLUSTER-" << i + 1 << " {";
-        cout << clusters[i].size() << endl;
 
         for (int j = 0; j < clusters[i].size(); j++)
         {
             if (j < clusters[i].size() - 1)
-                cout << clusters[i][j]->first << ", ";
+                out << clusters[i][j]->first << ", ";
             else
-                cout << clusters[i][j]->first;
+                out << clusters[i][j]->first;
         }
 
         out << "}" << endl;
     }
+    out << endl;
 
     out.close();
 }
@@ -386,5 +387,5 @@ void Clusters::printClusters()
 void DeallocateMemoryClusters()
 {
     delete vectorData;
-    delete clusters;
+    delete clust;
 }

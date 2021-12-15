@@ -27,13 +27,13 @@ class Clusters
         void Lloyd();
         vector<double> mean(int c);
         bool updateCentroids();
-        int getSecondClosestCentroid(vector<double>& p);
+        int getSecondClosestCentroid(vector<double>& p, int c);
         double avgDistanceBetweenPoints(vector<double>& p, int c);
         void Silhouette(string filename, bool complete);
         void printClusters();
 };
 
-extern Clusters *clusters;
+extern Clusters *clust;
 
 void readConfig(string filename, int& num_clusters, int& L, int& num_hash, int& M, int& cube_dim, int& probes);
 void init_vectorData();

@@ -10,8 +10,8 @@ search: search.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o 
 test_unit: test_unit.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o 
 	$(CC) -o test_unit test_unit.o $(OBJS)
 
-cluster: cluster.o Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o
-	$(CC) -o cluster cluster.o $(OBJS2) -O2
+cluster: cluster.o Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o Frechet.o Curves.o
+	$(CC) -o cluster cluster.o $(OBJS2) Frechet.o Curves.o -O2
 
 # Object files
 search.o: src/search.cpp

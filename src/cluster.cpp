@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <ctime>
 
 #include "./Common/Methods.h"
 #include "./Cluster/Kmeans.h"
@@ -24,6 +25,8 @@ int main(int argc, char** argv)
     int M = 10;
     int cube_dim = 3;
     int probes = 2;
+
+    srand(time(NULL));
 
     if (argc > 15)
     {
