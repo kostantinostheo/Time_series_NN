@@ -107,12 +107,15 @@ int main(int argc, char** argv)
         {
             init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8, delta);
             CurvesLSH_pre_process(input_file, L);
-            lshCurves( query_file, out_file, 1, 1.0);
+            lshCurvesDiscrete( query_file, out_file, 1, 1.0);
             DeallocateMemory();
         }
         else if(metric == "continuous")
         {
-            //Handle continues
+            init_hashing_lsh(k, 1, dimension(input_file), count_file_lines(input_file)/8, delta);
+            CurvesLSH_pre_process(input_file, 1, false);
+            lshCurvesContinuous( query_file, out_file, 1);
+            DeallocateMemory();
         }
        
     }

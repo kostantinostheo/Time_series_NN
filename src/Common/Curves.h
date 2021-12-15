@@ -8,22 +8,23 @@
 #include <string>
 #include <random>
 #include <ctime>
+#include "../fred/include/curve.hpp"
 
 using namespace std;
 
 // Class that stores the curves from the input file
-class Curves {
+class TimeSeries {
 
     private:
         double delta;
         double frequency;
         vector<pair<double,double>> tGrid; //Each available tx and ty for snapping
 
-        list<pair<string, vector<double>>> curves;  // Curves from the input file
+        list<pair<string, vector<double>>> curves;  // TimeSeries from the input file
         list < pair < const pair < string, vector<double> > &, vector<pair<double, double>>>> gridCurves;
         
     public:
-        Curves(double d,double freq, int L);
+        TimeSeries(double d,double freq, int L);
 
         pair<string, vector<double>> * insert(string id, vector<double> & p);
         
@@ -31,20 +32,26 @@ class Curves {
         
         inline unsigned int size(){return curves.size();}
         
-        vector<double>  gridCurveToVector(vector<pair<double, double>> &f);
+        vector<double>  vectorization(vector<pair<double, double>> &f);
         
-        vector<pair<double, double>> curveTogrid(vector<double> &y, int j);
+        vector<pair<double, double>> snappingDiscrete(vector<double> &y, int j);
         
-        vector<double> filtering(vector<double> timeSerie);
+        vector<double> snappingContinuous(vector<double> & y);
+        
+        vector<double> filtering(vector<double> &timeSerie);
 
-        vector<double> minimaxima(vector<double> timeSerie);
+        vector<double> minimaxima(vector<double> &timeSerie);
 
-        void padVector(vector<double> &v);
+        void padVector(vector<double> &v, bool discrete=true);
         
-        vector<pair<string, double>> findRealDistBruteForce( vector<double> &q, int N , double freq);
+        vector<pair<string, double>> findRealDistBruteForce_Discrete( vector<double> &q, int N , double freq);
+        
+        vector<pair<string, double>> findRealDistBruteForce_Continuous( vector<double> &q, int N);
+        
+        Curve transformer( const vector<double> &v );
 };
 
-extern Curves *curves;
+extern TimeSeries *curves;
 
 #endif
 
