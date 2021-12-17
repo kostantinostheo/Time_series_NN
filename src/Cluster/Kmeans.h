@@ -21,11 +21,13 @@ class Clusters
     public:
         
         Clusters(int k);
-        void KMeans();
+        void KMeans(bool frechetOption=false);
         void updateClusters();
-        void chooseNewCentroid();
-        void Lloyd();
+        void updateClustersFrechet();
+        void chooseNewCentroid(bool frechetOption=false);
+        void Lloyd(bool frechetOption=false);
         vector<double> mean(int c);
+        vector<double> meanCurve(int c);
         bool updateCentroids();
         int getSecondClosestCentroid(vector<double>& p, int c);
         double avgDistanceBetweenPoints(vector<double>& p, int c);
@@ -38,7 +40,7 @@ extern Clusters *clust;
 void readConfig(string filename, int& num_clusters, int& L, int& num_hash, int& M, int& cube_dim, int& probes);
 void init_vectorData();
 void init_clusters(int k);
-void Cluster_pre_process(string filename);
+void Cluster_pre_process(string filename, bool frechetOption=false);
 void DeallocateMemoryClusters();
 void cluster(string output, bool complete, bool silhouette);
 

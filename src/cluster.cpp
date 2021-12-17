@@ -6,6 +6,7 @@
 
 #include "./Common/Methods.h"
 #include "./Cluster/Kmeans.h"
+#include "./Common/Curves.h"
 
 using namespace std;
 
@@ -16,9 +17,9 @@ int main(int argc, char** argv)
     string conf_file = "";
     string out_file = "";
     string update = "";
-	string assignment = "";
+    string assignment = "";
     bool complete = false;
-	bool silhouette = false;
+    bool silhouette = false;
     int num_clusters = 2;
     int L = 3;
     int num_hash = 4;
@@ -95,11 +96,20 @@ int main(int argc, char** argv)
 
         }
     }
-    else if (update == "Mean Frechet")
+    else if (update == "Mean_Frechet")
     {
         if (assignment == "Classic")
         {
+            //init_vectorData();
+            curves = new TimeSeries(1.0, 1.0, 0.0);
 
+            Cluster_pre_process(input_file);
+
+            init_clusters(num_clusters);
+
+            cluster(out_file, complete, silhouette);
+
+            DeallocateMemoryClusters();
         }
         else if (assignment == "LSH_Frechet")
         {

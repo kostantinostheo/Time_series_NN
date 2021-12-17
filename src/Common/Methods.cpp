@@ -302,7 +302,7 @@ void cube(string input, string output, int N, int k, int maxPoints, int probes)
 
 
 // Function that reads all the points from the input file and saves them in the appropriate data structures (Cluster)
-void Cluster_pre_process(string filename)
+void Cluster_pre_process(string filename, bool frechetOption)
 {    
     vector<double> p;
     
@@ -331,11 +331,16 @@ void Cluster_pre_process(string filename)
                 token = strtok (NULL, " \t");
             }
 			
-			p.pop_back();
+            p.pop_back();
 
-            // Insert the 'item_id' of the point and its coordinates in the 'vectorData' list
-            // The 'VectorData::insert' function returns the address of the pair (id, p) that was just inserted in the list
-            pair<string, vector<double>> * vectorDataPointer =  vectorData->insert(id, p);
+            if( !frechetOption ){
+                // Insert the 'item_id' of the point and its coordinates in the 'vectorData' list
+                // The 'VectorData::insert' function returns the address of the pair (id, p) that was just inserted in the list
+                pair<string, vector<double>> * vectorDataPointer =  vectorData->insert(id, p);
+            }
+            else {
+                pair<string, vector<double>> * vectorDataPointer = curves->insert(id, p);
+            }
             
             delete[] buff;
             p.clear();

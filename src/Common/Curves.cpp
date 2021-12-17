@@ -223,10 +223,10 @@ vector<pair<string, double>> TimeSeries::findRealDistBruteForce_Continuous(vecto
     {
         vector<double> &p = candidate.second;
         
-        Curve curve1 = transformer( p );
-        Curve curve2 = transformer( q );
+        Curve curve1 = transformer(p);
+        Curve curve2 = transformer(q);
 
-        Frechet::Continuous::Distance dist = Frechet::Continuous::distance( curve1, curve2 );
+        Frechet::Continuous::Distance dist = Frechet::Continuous::distance(curve1, curve2);
         
         b.push_back(make_pair(candidate.first, dist.value));
     }
@@ -240,16 +240,25 @@ vector<pair<string, double>> TimeSeries::findRealDistBruteForce_Continuous(vecto
     return b;
 }
 
-Curve TimeSeries::transformer( const vector<double> &v )
+// Function that takes a curve (vector<double>) and turns it into a 'Curve' object from 'fred'
+Curve TimeSeries::transformer(const vector<double> &v)
 {
-    Curve fredCurve ( 1 );
+    // Create a 'Curve' object
+    Curve fredCurve (1);
     
+    // Give it all the coordinates of our curve
     for (int i = 0; i < v.size(); i++) {
         
         Point p(1);
         p.set(0, v[i]);
-        fredCurve.push_back( p );
+        fredCurve.push_back(p);
     }
 
     return fredCurve;
+}
+
+// Function that returns a reference to the 'curves' list
+list<pair<string, vector<double>>> & TimeSeries::getBegin()
+{
+    return curves;
 }

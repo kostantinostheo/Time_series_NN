@@ -2,8 +2,11 @@
 #include "Kmeans.h"
 #include "../Common/VectorData.h"
 #include "../Common/Euclidean.h"
+#include "../Common/Curves.h"
+#include "../Common/Frechet.h"
 
 #include <iostream>
+#include <algorithm>
 #include <string.h>
 
 using namespace std;
@@ -54,6 +57,7 @@ void readConfig(string filename, int& num_clusters, int& L, int& num_hash, int& 
 // Function that initializes creates the data structure that stores all the points
 void init_vectorData()
 {
+    curves = nullptr;
     vectorData = new VectorData();
 }
 
@@ -80,13 +84,23 @@ Clusters::Clusters(int k)
 }
 
 // Function that performs KMeans++ initialization
-void Clusters::KMeans()
+void Clusters::KMeans(bool frechetOption)
 {
     // Find the initial centroids
-    for (int i = 0; i < k-1; i++) {
-        
-        updateClusters();
-        chooseNewCentroid();
+    if(!frechetOption){
+    
+        for (int i = 0; i < k-1; i++) {
+
+            updateClusters();
+            chooseNewCentroid();
+        }
+    }
+    else {
+        for (int i = 0; i < k-1; i++) {
+
+            updateClustersFrechet();
+            chooseNewCentroid(true);
+        }
     }
 }
 
@@ -119,16 +133,57 @@ void Clusters::updateClusters()
     }
 }
 
+// Function that finds the closest centroid for every curve in the dataset
+// and assigns the curves to the right cluster
+void Clusters::updateClustersFrechet()
+{
+    clusters.clear();
+    clusters.resize(k);
+    int i = 0;
+    
+    double freq = curves->getFreq();
+    
+    // For every curve find the closest centroid
+    for(auto &v : curves->getBegin())
+    {
+        int newC = -1;
+        double min = INT32_MAX;
+        
+        for (int c = 0; c < centroids.size() ; c++) {
+
+            double dist = FrechetDistance(v.second, centroids[c], freq );
+            
+            if(dist < min) {
+                min = dist;
+                newC = c;
+            }
+        }
+        
+        // Assign the curve to this cluster
+        clusters[newC].push_back(&(v));
+    }
+}
+
 // Function that finds a new centroid during KMeans++
-void Clusters::chooseNewCentroid()
+void Clusters::chooseNewCentroid(bool frechetOption)
 {
     vector<double> sums;
     vector<vector<double>> nonCentroidPoints;
     sums.push_back(0);  // Partial sums P(r)
     int count = 0;
+    double freq;
+    
+    list<pair<string, vector<double>>> * collection;
+    
+    if(!frechetOption)
+        collection = &(vectorData->getBegin());
+    else{
+        collection = &(curves->getBegin());
+        freq = curves->getFreq();
+    }
     
     // For every non-centroid point
-    for(auto v : vectorData->getBegin())
+    for(auto v : *collection)
     {
         count++;
         double dist = 0;
@@ -138,7 +193,11 @@ void Clusters::chooseNewCentroid()
         // Find the minimum and maximum distance to some centroids
         for (int c = 0; c < centroids.size(); c++) {
 
-            dist = euclidean_distance(v.second, centroids[c]);
+            if(!frechetOption)
+                dist = euclidean_distance(v.second, centroids[c]);
+            else
+                dist = FrechetDistance(v.second, centroids[c], freq);
+            
             if(dist == 0.0)
                 break;
                     
@@ -187,16 +246,26 @@ void Clusters::chooseNewCentroid()
 }
 
 // Function that performs Lloyd's assignment
-void Clusters::Lloyd()
+void Clusters::Lloyd(bool frechetOption)
 {
     bool b;
 
-    do {
+    if( !frechetOption ){
+        do {
 
-        updateClusters();
-        b = updateCentroids();
-        
-    } while(!b);
+            updateClusters();
+            b = updateCentroids();
+
+        } while(!b);
+    }
+    else {
+        do {
+
+            updateClustersFrechet();
+            b = updateCentroids();
+
+        } while(!b);
+    }
 }
 
 // Function that finds better centroids by calculating a mean vector per cluster
@@ -243,6 +312,42 @@ vector<double> Clusters::mean(int c)
             m[i] = m[i] / clusters[c].size();
         
     }
+    return m;
+}
+
+vector<double> Clusters::meanCurve(int c )
+{    
+    vector<double> m = centroids[c];
+    double freq = curves->getFreq();
+
+    vector<pair<string, vector<double>> *> & cus = clusters[c];
+    vector<vector<double> > temp;
+    for (auto elem : cus) {
+
+        temp.push_back( elem->second );
+    }
+
+
+
+    
+    shuffle( temp.begin(), temp.end(), std::default_random_engine(time(NULL)) );
+    
+    //vector<pair<int,int>> indexes = opt
+    while( temp.size() != 1 ){
+        
+        //vector<vector<double>> temp;
+        
+        vector<double> p = temp.erase( temp.begin() );
+        vector<double> q = temp.erase( temp.begin() );
+        
+        vector<pair<int, int>> indexes = OptimalTraversal( p, q, freq );
+        
+        vector<double> x;
+        
+        
+    }
+    
+    
     return m;
 }
 
@@ -415,4 +520,5 @@ void DeallocateMemoryClusters()
 {
     delete vectorData;
     delete clust;
+    delete curves;
 }

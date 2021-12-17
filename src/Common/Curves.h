@@ -21,7 +21,6 @@ class TimeSeries {
         vector<pair<double,double>> tGrid; //Each available tx and ty for snapping
 
         list<pair<string, vector<double>>> curves;  // TimeSeries from the input file
-        list < pair < const pair < string, vector<double> > &, vector<pair<double, double>>>> gridCurves;
         
     public:
         TimeSeries(double d,double freq, int L);
@@ -49,6 +48,10 @@ class TimeSeries {
         vector<pair<string, double>> findRealDistBruteForce_Continuous( vector<double> &q, int N);
         
         Curve transformer( const vector<double> &v );
+        
+        list<pair<string, vector<double>>> & getBegin();
+        
+        double getFreq(){ return frequency; }
 };
 
 extern TimeSeries *curves;
