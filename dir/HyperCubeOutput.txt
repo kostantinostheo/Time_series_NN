@@ -7,9 +7,9 @@ distanceTrue: 78.0146
 
 Query: aeri
 Algorithm: Hypercube
-Approximate Nearest neighbor: abcb
+Approximate Nearest neighbor: aa
 True Nearest neighbor: abcb
-distanceApproximate: 259.051
+distanceApproximate: 273.728
 distanceTrue: 259.051
 
 Query: aes
@@ -21,9 +21,9 @@ distanceTrue: 33.7924
 
 Query: aet
 Algorithm: Hypercube
-Approximate Nearest neighbor: aapl
+Approximate Nearest neighbor: acn
 True Nearest neighbor: aapl
-distanceApproximate: 323.98
+distanceApproximate: 421.637
 distanceTrue: 323.98
 
 Query: aeti
@@ -68,6 +68,6 @@ True Nearest neighbor: aeh
 distanceApproximate: 10.9989
 distanceTrue: 10.9989
 
-tApproximateAverage: 817 microseconds
-tTrueAverage: 1580 microseconds
-MAF: 1
+tApproximateAverage: 989 microseconds
+tTrueAverage: 1883 microseconds
+MAF: 1.30143

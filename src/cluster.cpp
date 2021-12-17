@@ -82,7 +82,7 @@ int main(int argc, char** argv)
             Cluster_pre_process(input_file);
 
             init_clusters(num_clusters);
-
+            
             cluster(out_file, complete, silhouette);
 
             DeallocateMemoryClusters();
@@ -103,11 +103,11 @@ int main(int argc, char** argv)
             //init_vectorData();
             curves = new TimeSeries(1.0, 1.0, 0.0);
 
-            Cluster_pre_process(input_file);
+            Cluster_pre_process(input_file, true);
 
-            init_clusters(num_clusters);
+            init_clusters(num_clusters, true);
 
-            cluster(out_file, complete, silhouette);
+            cluster(out_file, complete, silhouette, true);
 
             DeallocateMemoryClusters();
         }

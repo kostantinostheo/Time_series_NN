@@ -1,16 +1,16 @@
 CC=g++
-CFLAGS= -std=c++11
-OBJS = Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o #config.o curve.o frechet.o interval.o point.o simplification.o
-OBJS2 = Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o
+CFLAGS= -std=c++14
+OBJS = Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o config.o curve.o frechet.o interval.o point.o simplification.o
+OBJS2 = Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o config.o curve.o frechet.o interval.o point.o simplification.o
 
 # Executables
-search: search.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o #config.o curve.o frechet.o interval.o point.o simplification.o
+search: search.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o config.o curve.o frechet.o interval.o point.o simplification.o
 	$(CC) -o search search.o $(OBJS) -O2
 
-test_unit: test_unit.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o #config.o curve.o frechet.o interval.o point.o simplification.o
+test_unit: test_unit.o Methods.o Hashing.o VectorData.o Tools.o Euclidean.o Frechet.o Curves.o config.o curve.o frechet.o interval.o point.o simplification.o
 	$(CC) -o test_unit test_unit.o $(OBJS)
 
-cluster: cluster.o Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o Frechet.o Curves.o
+cluster: cluster.o Kmeans.o Methods.o VectorData.o Euclidean.o Hashing.o Tools.o Frechet.o Curves.o config.o curve.o frechet.o interval.o point.o simplification.o
 	$(CC) -o cluster cluster.o $(OBJS2) Frechet.o Curves.o -O2
 
 # Object files

@@ -262,3 +262,14 @@ list<pair<string, vector<double>>> & TimeSeries::getBegin()
 {
     return curves;
 }
+
+vector<pair<double, double>> TimeSeries::convertToYX(vector<double> &v)
+{
+    int i=0;
+    vector<pair<double, double>> e;
+    for (auto y : v) {
+        e.push_back( make_pair( i*frequency, y ) );
+    }
+    
+    return e;
+}

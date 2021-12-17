@@ -51,6 +51,8 @@ class TimeSeries {
         
         list<pair<string, vector<double>>> & getBegin();
         
+        vector<pair<double, double>> convertToYX(vector<double> &v);
+        
         double getFreq(){ return frequency; }
 };
 

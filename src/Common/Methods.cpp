@@ -574,8 +574,8 @@ void lshCurvesContinuous(string input, string output, int N)
             vector<pair<string, double>> bf =  curves->findRealDistBruteForce_Continuous(q, N);
             auto endRealDist = chrono::steady_clock::now();
 
-            tApproximateAverage += chrono::duration_cast<chrono::microseconds>(endLSH - startLSH).count();
-            tTrueAverage += chrono::duration_cast<chrono::microseconds>(endRealDist - startRealDist).count();
+            tApproximateAverage += chrono::duration_cast<chrono::seconds>(endLSH - startLSH).count();
+            tTrueAverage += chrono::duration_cast<chrono::seconds>(endRealDist - startRealDist).count();
 
             counter++;
 
@@ -611,8 +611,8 @@ void lshCurvesContinuous(string input, string output, int N)
             delete[] buff;
             q.clear();
         }
-        outputFile << "tApproximateAverage: " << tApproximateAverage / counter << " microseconds" << endl;
-        outputFile << "tTrueAverage: " <<  tTrueAverage / counter << " microseconds" << endl;
+        outputFile << "tApproximateAverage: " << tApproximateAverage / counter << " seconds" << endl;
+        outputFile << "tTrueAverage: " <<  tTrueAverage / counter << " seconds" << endl;
         outputFile << "MAF: " << maxmaf << endl;
 
         cout << "Average distance variation: " << statistics/counter << endl;
