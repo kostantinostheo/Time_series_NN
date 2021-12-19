@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -29,7 +28,7 @@ int main(int argc, char** argv)
 
     srand(time(NULL));
 
-    if (argc > 15)
+    if (argc > 13)
     {
         cout << "Error: Too many arguments" << endl;
         exit(1);
@@ -100,7 +99,6 @@ int main(int argc, char** argv)
     {
         if (assignment == "Classic")
         {
-            //init_vectorData();
             curves = new TimeSeries(1.0, 1.0, 0.0);
 
             Cluster_pre_process(input_file, true);

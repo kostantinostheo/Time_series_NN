@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include "Methods.h"
 #include "../LSH/LshHashing.h"
 #include "../HyperCube/CubeHashing.h"
@@ -220,7 +219,6 @@ void cube(string input, string output, int N, int k, int maxPoints, int probes)
         double maf=0.0;
         double maxmaf=-1.0;
 
-
         // Read every line of the file
         while (getline(inputFile, line))
         {
@@ -270,10 +268,9 @@ void cube(string input, string output, int N, int k, int maxPoints, int probes)
             if(!nn.empty()){
                 outputFile << "distanceApproximate: "<< nn[0].second << endl;
                 maf = nn[0].second / bf[0].second;
-                if( maf > maxmaf ) {
-                    
+
+                if(maf > maxmaf)
                     maxmaf = maf;
-                }
             }
             else{
                 outputFile << "distanceApproximate: null" << endl;
@@ -333,12 +330,13 @@ void Cluster_pre_process(string filename, bool frechetOption)
 			
             p.pop_back();
 
-            if( !frechetOption ){
+            if(!frechetOption){
                 // Insert the 'item_id' of the point and its coordinates in the 'vectorData' list
                 // The 'VectorData::insert' function returns the address of the pair (id, p) that was just inserted in the list
                 pair<string, vector<double>> * vectorDataPointer =  vectorData->insert(id, p);
             }
             else {
+                // Insert the 'item_id' of the curve and its coordinates in the 'curves' list
                 pair<string, vector<double>> * vectorDataPointer = curves->insert(id, p);
             }
             
@@ -383,7 +381,6 @@ void CurvesLSH_pre_process(string filename, int L, bool discrete)
             // Insert the 'item_id' of the curve and its coordinates in the 'curves' object
             pair<string, vector<double>> * curvePtr = curves->insert(id, p);
             
-            
             if(discrete){
             
                 for (int i = 0; i < L; i++) 
@@ -403,18 +400,20 @@ void CurvesLSH_pre_process(string filename, int L, bool discrete)
             }
             else {
                 
+                // Filter the curve
                 vector<double> filtered = curves->filtering(p);
                 
                 // Map the curve to a grid and get the new grid curve
                 vector<double> snapped = curves->snappingContinuous( filtered );
 
+                // Keep only the minima and maxima of the curve
                 vector<double> minimaxed = curves->minimaxima( snapped );
                 
                 // Pad the vector
                 curves->padVector( minimaxed, false );
 
                 // Insert the vector in one of the LSH hashtables
-                LSH_hashTables->LSH_insert( 0, minimaxed, curvePtr);
+                LSH_hashTables->LSH_insert(0, minimaxed, curvePtr);
             }
             
             delete[] buff;
@@ -425,7 +424,7 @@ void CurvesLSH_pre_process(string filename, int L, bool discrete)
     }
 }
 
-// Function that reads all the query points from the query file and executes the ANN algorithm (LSH_Frechet)
+// Function that reads all the query points from the query file and executes the ANN algorithm (LSH_Frechet Discrete)
 // It also generates the output file with the results
 void lshCurvesDiscrete(string input, string output, int N, double freq)
 {
@@ -466,7 +465,7 @@ void lshCurvesDiscrete(string input, string output, int N, double freq)
 
             // Find the N nearest neighbors using the ANN algorithm, their Frechet distance from 'q' and the time it takes to find them
             auto startLSH = chrono::steady_clock::now();
-            vector<pair<string, double>> nn = LSH_hashTables->LSH_findCurvedNN_Discrete (q, N, freq);
+            vector<pair<string, double>> nn = LSH_hashTables->LSH_findCurvesNN_Discrete (q, N, freq);
             auto endLSH = chrono::steady_clock::now();
 
             // Find the real Frechet distances of the N nearest neighbors from 'q' and the time it takes to find them
@@ -493,10 +492,9 @@ void lshCurvesDiscrete(string input, string output, int N, double freq)
             if(!nn.empty()){
                 outputFile << "distanceApproximate: "<< nn[0].second << endl;
                 maf = nn[0].second / bf[0].second;
-                if( maf > maxmaf ) {
-                    
+
+                if(maf > maxmaf)
                     maxmaf = maf;
-                }
             }
             else{
                 outputFile << "distanceApproximate: null" << endl;
@@ -524,7 +522,7 @@ void lshCurvesDiscrete(string input, string output, int N, double freq)
 }
 
 
-// Function that reads all the query points from the query file and executes the ANN algorithm (LSH_Frechet)
+// Function that reads all the query points from the query file and executes the ANN algorithm (LSH_Frechet Continuous)
 // It also generates the output file with the results
 void lshCurvesContinuous(string input, string output, int N)
 {
@@ -593,10 +591,9 @@ void lshCurvesContinuous(string input, string output, int N)
             if(!nn.empty()){
                 outputFile << "distanceApproximate: "<< nn[0].second << endl;
                 maf = nn[0].second / bf[0].second;
-                if( maf > maxmaf ) {
-                    
+
+                if(maf > maxmaf)
                     maxmaf = maf;
-                }
             }
             else{
                 outputFile << "distanceApproximate: null" << endl;

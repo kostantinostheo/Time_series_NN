@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include "Kmeans.h"
 #include "../Common/VectorData.h"
 #include "../Common/Euclidean.h"
@@ -74,7 +73,7 @@ Clusters::Clusters(int k, bool frechetOption)
     cout << "Number of clusters: " << k << endl;
     clusters.resize(k);
     
-    if( !frechetOption ) {
+    if(!frechetOption) {
         unsigned int random_point = rand() % vectorData->size();
 
         // Get a random point from the list of points
@@ -90,9 +89,9 @@ Clusters::Clusters(int k, bool frechetOption)
         // Get a random point from the list of points
         vector<double> c = curves->getCurve(random_point).second;
         
-        // This random point will be the first centroid
         vector<pair<double, double>> e = curves->convertToYX(c);
 
+        // This random point will be the first centroid
         centroids.push_back(c);
         centroidsXY.push_back(e);
     }
@@ -168,7 +167,7 @@ void Clusters::updateClustersFrechet(bool isKmeans)
 
             for (int c = 0; c < centroids.size() ; c++) {
 
-                double dist = FrechetDistance( v.second, centroids[c], freq );
+                double dist = FrechetDistance(v.second, centroids[c], freq);
 
                 if(dist < min) {
                     min = dist;
@@ -191,7 +190,7 @@ void Clusters::updateClustersFrechet(bool isKmeans)
 
             for (int c = 0; c < centroidsXY.size() ; c++) {
 
-                double dist = FrechetDistance( curves->convertToYX(v.second), centroidsXY[c] );
+                double dist = FrechetDistance(curves->convertToYX(v.second), centroidsXY[c]);
 
                 if(dist < min) {
                     min = dist;
@@ -339,7 +338,7 @@ bool Clusters::updateCentroids(bool frechetOption)
     }
     else{
         
-        // For every cluster find the mean vector and make that the new centroid
+        // For every cluster find the mean curve and make that the new centroid
         for (int i = 0; i < centroidsXY.size(); i++) {
             vector<pair<double, double>> m = meanCurve(i);
             double dist = FrechetDistance(centroidsXY[i], m );
@@ -382,6 +381,7 @@ vector<double> Clusters::mean(int c)
     return m;
 }
 
+// Function that finds the mean curve of a specific cluster
 vector<pair<double, double>> Clusters::meanCurve(int c)
 {    
     if(clusters[c].size() == 0){
@@ -392,32 +392,36 @@ vector<pair<double, double>> Clusters::meanCurve(int c)
     double freq = curves->getFreq();
 
     vector<pair<string, vector<double>> *> & cus = clusters[c];
-    vector<vector<pair<double, double>> > temp;
+    vector<vector<pair<double, double>>> temp;
+
+    // Copy all the curves
     for (auto elem : cus) {
 
         int i=0;
         vector<pair<double, double>> x;
-        for( auto inner : elem->second )
-            x.push_back( make_pair( (i++)*freq, inner ) );
+
+        // Get the (x,y) coordinates of every curve
+        for(auto inner : elem->second)
+            x.push_back(make_pair((i++)*freq, inner));
         
         temp.push_back(x);
     }
 
-    shuffle( temp.begin(), temp.end(), std::default_random_engine(time(NULL)) );
+    // Shuffle the curves randomly
+    shuffle(temp.begin(), temp.end(), std::default_random_engine(time(NULL)));
     
-    int numCurves = temp.size();
-    int height = ceil( log2(numCurves) );
-    unsigned int dummiesCount = pow( 2, height ) - numCurves;
+    int numCurves = temp.size();  // Number of curves that are in the leaves of the tree
+    int height = ceil(log2(numCurves));  // Height of complete binary tree
+    unsigned int dummiesCount = pow(2, height) - numCurves;  // Number of empty leaves in tree
     
-
-      
-    for(int h=0; h<height; h++){
+    // Calculate all the mean curves for all depths of the tree until one mean curve remains
+    for(int h = 0; h < height; h++){
     
         vector<vector<pair<double,double> >> temp2;
         
-        while( temp.size() != 0 )
+        while(temp.size() != 0)
         {
-            if( temp.size() >= 2 )
+            if(temp.size() >= 2)
             {
                 vector<pair<double,double>> p = temp.front();        temp.erase( temp.begin() );
                 vector<pair<double,double>> q = temp.front();        temp.erase( temp.begin() );
@@ -431,7 +435,6 @@ vector<pair<double, double>> Clusters::meanCurve(int c)
                     x.push_back( make_pair ( (p[indexes[i].first].first+q[indexes[i].second].first)/2.0, (p[indexes[i].first].second+q[indexes[i].second].second)/2.0)  );
                 }
 
-                // eisagwgi ston panw epipedo
                 temp2.push_back(x);
             }
             else {
@@ -439,7 +442,6 @@ vector<pair<double, double>> Clusters::meanCurve(int c)
                 vector<pair<double,double>> p = temp.front();        temp.erase( temp.begin() );
                 dummiesCount--;
                 
-                // eisagwgi ston panw epipedo
                 temp2.push_back(p);
             }
         }
@@ -644,29 +646,6 @@ void cluster(string output, bool complete, bool silhouette, bool frechetOption)
 
     // Create the output file and write all the results inside
     clust->Silhouette(output, complete, silhouette, frechetOption);
-}
-
-void Clusters::printClusters()
-{
-    ofstream out("clust.txt");
-
-    for (int i = 0; i < centroids.size(); i++)
-    {
-        out << "CLUSTER-" << i + 1 << " {";
-
-        for (int j = 0; j < clusters[i].size(); j++)
-        {
-            if (j < clusters[i].size() - 1)
-                out << clusters[i][j]->first << ", ";
-            else
-                out << clusters[i][j]->first;
-        }
-
-        out << "}" << endl;
-    }
-    out << endl;
-
-    out.close();
 }
 
 void DeallocateMemoryClusters()

@@ -16,9 +16,8 @@ unsigned int HammingDistance(unsigned int a, unsigned int b);
 
 void DeallocateMemory();
 
-//void read_configuration(string filename);
-//int extractIntegerFromString(string str);
 int dimension(string filename);
+
 int count_file_lines(string filename);
 
 /* h and g functions for LSH and hypercube calculations */

@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// Class that stores the curves from the input file
+// Class that stores the time series from the input file
 class TimeSeries {
 
     private:
@@ -20,7 +20,7 @@ class TimeSeries {
         double frequency;
         vector<pair<double,double>> tGrid; //Each available tx and ty for snapping
 
-        list<pair<string, vector<double>>> curves;  // TimeSeries from the input file
+        list<pair<string, vector<double>>> curves;  // Time series from the input file
         
     public:
         TimeSeries(double d,double freq, int L);
