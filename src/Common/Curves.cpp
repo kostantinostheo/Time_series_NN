@@ -30,11 +30,11 @@ TimeSeries::TimeSeries(double d, double freq, int L) {
 // Function that inserts a curve into a list of curves
 pair<string, vector<double>> * TimeSeries::insert(string id, vector<double> & v)
 {
-    // Insert the 'item_id' of curve 'p' and its coordinates
+    // Insert the 'item_id' of curve 'v' and its coordinates
     curves.push_back(make_pair(id, v));
     
     // Get the item that was just inserted in the list
-    pair< string, vector<double>> &p = curves.back();
+    pair<string, vector<double>> &p = curves.back();
     
     return &p; 
 }
@@ -64,25 +64,27 @@ vector<double>  TimeSeries::vectorization(vector<pair<double, double>> &f)
 }
 
 // Function that filters curves (Continuous Frechet)
-vector<double> TimeSeries::filtering(vector<double> & timeSerie)
+vector<double> TimeSeries::filtering(vector<double> & timeSeries)
 {
     vector<double> filtered;
     
-    for (int i = 0; i < timeSerie.size(); i++)
+    // For every point of the curve
+    for (int i = 0; i < timeSeries.size(); i++)
     {
-        if (i == timeSerie.size()-1 || i == timeSerie.size()-2)
+        if (i == timeSeries.size()-1 || i == timeSeries.size()-2)
         {
-            filtered.push_back(timeSerie[i]);
+            filtered.push_back(timeSeries[i]);
         }
         else
         {
-            if(abs(timeSerie[i] - timeSerie[i+1]) <= filterThreshold && abs(timeSerie[i+1] - timeSerie[i+2]) <= filterThreshold)
+            // Check if |a-b| <= e and |b-c| <= e
+            if(abs(timeSeries[i] - timeSeries[i+1]) <= filterThreshold && abs(timeSeries[i+1] - timeSeries[i+2]) <= filterThreshold)
             {
-                filtered.push_back(timeSerie[i]);
+                filtered.push_back(timeSeries[i]);
                 i++;
             }
             else
-                filtered.push_back(timeSerie[i]);
+                filtered.push_back(timeSeries[i]);
         }
     }
 
@@ -90,35 +92,38 @@ vector<double> TimeSeries::filtering(vector<double> & timeSerie)
 }
 
 // Function that only keeps the minima and maxima of a curve and discards all other points
-vector<double> TimeSeries::minimaxima(vector<double> & timeSerie)
+vector<double> TimeSeries::minimaxima(vector<double> & timeSeries)
 {
-    vector<double> super_filtered;
+    vector<double> minimaMaxima;
     double min, max = 0.0;
 
-    super_filtered.push_back(timeSerie[0]); 
+    minimaMaxima.push_back(timeSeries[0]);
 
-    for (int i = 1; i < timeSerie.size()-1; i++)
+    // For every point of the curve
+    for (int i = 1; i < timeSeries.size()-1; i++)
     {
-        min = timeSerie[i-1];
-        max = timeSerie[i+1];
-        if(timeSerie[i-1] > timeSerie[i+1])
+        min = timeSeries[i-1];
+        max = timeSeries[i+1];
+
+        if(timeSeries[i-1] > timeSeries[i+1])
         {
-            max = timeSerie[i-1];
-            min = timeSerie[i+1];
+            max = timeSeries[i-1];
+            min = timeSeries[i+1];
         }
         
-        if(timeSerie[i] >= min && timeSerie[i] <= max)
+        // Check if current point is in [min, max] and if it is then discard it
+        if(timeSeries[i] >= min && timeSeries[i] <= max)
             continue;
         else   
-            super_filtered.push_back(timeSerie[i]);
+            minimaMaxima.push_back(timeSeries[i]);
     }
 
-    super_filtered.push_back(timeSerie[timeSerie.size()-1]);
+    minimaMaxima.push_back(timeSeries[timeSeries.size()-1]);
 
-    return super_filtered;
+    return minimaMaxima;
 }
 
-// Function that maps a curve to a grid
+// Function that maps a curve to a grid (Discrete Frechet)
 vector<pair<double, double>> TimeSeries::snappingDiscrete(vector<double> & y, int j)
 {
     vector<pair<double, double>> proccesed;
@@ -128,8 +133,8 @@ vector<pair<double, double>> TimeSeries::snappingDiscrete(vector<double> & y, in
         double tx = tGrid[j].first;
         double ty = tGrid[j].second;
 
-        double xi = floor((tx)/delta +0.5)*delta + tx;
-        double yi = floor(abs(y[0]-ty)/delta +0.5)*delta + ty;
+        double xi = floor((tx)/delta + 0.5)*delta + tx;
+        double yi = floor(abs(y[0]-ty)/delta + 0.5)*delta + ty;
 
         proccesed.push_back(make_pair(xi, yi));
     }
@@ -139,8 +144,8 @@ vector<pair<double, double>> TimeSeries::snappingDiscrete(vector<double> & y, in
         double tx = tGrid[j].first;
         double ty = tGrid[j].second;
 
-        double xi = floor(abs(i*frequency-tx)/delta +0.5)*delta + tx;
-        double yi = floor(abs(y[i]-ty)/delta +0.5)*delta + ty;
+        double xi = floor(abs(i*frequency-tx)/delta + 0.5)*delta + tx;
+        double yi = floor(abs(y[i]-ty)/delta + 0.5)*delta + ty;
 
         if(proccesed.back().first != xi || proccesed.back().second != yi)
             proccesed.push_back(make_pair(xi, yi));
@@ -149,7 +154,7 @@ vector<pair<double, double>> TimeSeries::snappingDiscrete(vector<double> & y, in
     return proccesed;
 }
 
-// Function that maps a curve to a grid
+// Function that maps a curve to a grid (Continuous Frechet)
 vector<double> TimeSeries::snappingContinuous(vector<double> & y)
 {
     vector<double> proccesed;
@@ -180,11 +185,12 @@ vector<double> TimeSeries::snappingContinuous(vector<double> & y)
 // Function that pads a vector with a large number if it's shorter than expected
 void TimeSeries::padVector(vector<double> &v, bool discrete)
 {
-    int m = (curves.begin())->second.size() * ( discrete ? 2 : 1); // New size of vector
+    int m = (curves.begin())->second.size() * (discrete ? 2 : 1); // New size of vector
     int n = v.size();  // Current size of vector
     
     v.resize(m);
     
+    // Insert large numbers at the end of the vector
     for (int i = n; i < m; i++) {
         
         v[i] = numeric_limits<double>::max();
@@ -192,7 +198,7 @@ void TimeSeries::padVector(vector<double> &v, bool discrete)
 
 }
 
-// Function that finds the real Frechet distances between curve'q' and its N nearest neighbors using exhaustive search
+// Function that finds the real discrete Frechet distances between curve 'q' and its N nearest neighbors using exhaustive search
 vector<pair<string, double>> TimeSeries::findRealDistBruteForce_Discrete(vector<double> &q, int N , double freq)
 {
     vector<pair<string, double>> b;
@@ -213,7 +219,7 @@ vector<pair<string, double>> TimeSeries::findRealDistBruteForce_Discrete(vector<
     return b;
 }
 
-// Function that finds the real Frechet distances between curve'q' and its N nearest neighbors using exhaustive search
+// Function that finds the real continuous Frechet distances between curve 'q' and its N nearest neighbors using exhaustive search
 vector<pair<string, double>> TimeSeries::findRealDistBruteForce_Continuous(vector<double> &q, int N)
 {
     vector<pair<string, double>> b;
@@ -223,9 +229,11 @@ vector<pair<string, double>> TimeSeries::findRealDistBruteForce_Continuous(vecto
     {
         vector<double> &p = candidate.second;
         
+        // Turn the curves into 'Curve' objects
         Curve curve1 = transformer(p);
         Curve curve2 = transformer(q);
 
+        // Call the continuous Frechet function by giving it the 'Curve' objects we created
         Frechet::Continuous::Distance dist = Frechet::Continuous::distance(curve1, curve2);
         
         b.push_back(make_pair(candidate.first, dist.value));
@@ -263,12 +271,14 @@ list<pair<string, vector<double>>> & TimeSeries::getBegin()
     return curves;
 }
 
+// Function that takes a curve with one-dimensional points and turns it into a curve with two-dimensional points
 vector<pair<double, double>> TimeSeries::convertToYX(vector<double> &v)
 {
-    int i=0;
+    int i = 0;
     vector<pair<double, double>> e;
+
     for (auto y : v) {
-        e.push_back( make_pair( i*frequency, y ) );
+        e.push_back(make_pair(i*frequency, y));
     }
     
     return e;

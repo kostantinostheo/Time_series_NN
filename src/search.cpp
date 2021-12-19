@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 
     srand(time(NULL));
     
-    if (argc > 15)
+    if (argc > 21)
     {
         cout << "Error: Too many arguments" << endl;
         exit(1);
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
     {
         if(metric == "discrete")
         {
-            cout << "Running Frechet Discrete" << endl;
+            cout << "Running Discrete Frechet" << endl;
             init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8, delta);
             CurvesLSH_pre_process(input_file, L);
             lshCurvesDiscrete( query_file, out_file, 1, 1.0);
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
         }
         else if(metric == "continuous")
         {
-            cout << "Running Frechet Continuous" << endl;
+            cout << "Running Continuous Frechet" << endl;
             init_hashing_lsh(k, 1, dimension(input_file), count_file_lines(input_file)/8, delta);
             CurvesLSH_pre_process(input_file, 1, false);
             lshCurvesContinuous( query_file, out_file, 1);

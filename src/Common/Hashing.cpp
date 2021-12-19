@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include "../LSH/LshHashing.h"
 #include "../HyperCube/CubeHashing.h"
 #include "../Common/VectorData.h"
@@ -38,7 +37,6 @@ using namespace std;
 // Function that is used to initialize all the necessary variables and data structures in order to use the hash functions and the hash tables (LSH)
 void init_hashing_lsh(int k, int L, int d, unsigned int TableSize, double delta)
 {
-    //srand(time(NULL));
     
     window = 400;
     int C = 1;
@@ -162,7 +160,6 @@ void init_hashing_lsh(int k, int L, int d, unsigned int TableSize)
 // Function that is used to initialize all the necessary variables and data structures in order to use the hash functions and the hash table (Hypercube)
 void init_hashing_cube(int k, int d, unsigned int TableSize)
 {
-    srand(time(NULL));
     
     window = 400;
     
@@ -343,10 +340,10 @@ vector<pair<string, double>> LSHHashTable::LSH_findNN(vector<double> &q, int N)
     return vb;
 }
 
-vector<pair<string, double>> LSHHashTable::LSH_findCurvedNN_Discrete(vector<double> &query, int N, double freq)
+// Function that finds the N approximate nearest neighbors for curves using discrete Frechet
+vector<pair<string, double>> LSHHashTable::LSH_findCurvesNN_Discrete(vector<double> &query, int N, double freq)
 {
     map<string, double> b;
-   
     
     // For each hash table
     for (int i = 0; i < L; i++) {
@@ -354,10 +351,9 @@ vector<pair<string, double>> LSHHashTable::LSH_findCurvedNN_Discrete(vector<doub
         // Process query curve
         vector<pair<double, double>> processedQ = curves->snappingDiscrete( query, i);
 
-        vector<double> concatVec = curves->vectorization( processedQ );
+        vector<double> concatVec = curves->vectorization(processedQ);
 
-        curves->padVector( concatVec );
-        
+        curves->padVector(concatVec);
         
         // Get the bucket that query 'concatVec' belongs in
         unsigned int hashValue = g_func(concatVec, i);
@@ -395,22 +391,22 @@ vector<pair<string, double>> LSHHashTable::LSH_findCurvedNN_Discrete(vector<doub
     return vb;
 }
 
+// Function that finds the N approximate nearest neighbors for curves using continuous Frechet
 vector<pair<string, double>> LSHHashTable::LSH_findCurvedNN_Continuous(vector<double> &query, int N)
 {
     map<string, double> b;
-   
     
+    // Filter the curve
     vector<double> filtered = curves->filtering(query);
                 
     // Map the curve to a grid and get the new grid curve
-    vector<double> snapped = curves->snappingContinuous( filtered );
+    vector<double> snapped = curves->snappingContinuous(filtered);
 
-    vector<double> minimaxed = curves->minimaxima( snapped );
+    // Keep only the minima and maxima of that curve
+    vector<double> minimaxed = curves->minimaxima(snapped);
 
-    // Pad the vector
-    curves->padVector( minimaxed, false );
-    
-
+    // Pad the curve
+    curves->padVector(minimaxed, false);
 
     // Get the bucket that query 'concatVec' belongs in
     unsigned int hashValue = g_func(minimaxed, 0);
@@ -427,10 +423,11 @@ vector<pair<string, double>> LSHHashTable::LSH_findCurvedNN_Continuous(vector<do
             // If the 'item_id' of that point is not already in the map then insert the distance
             if(b.find(id) == b.end()){
                 
-                Curve curve1 = curves->transformer( p );
-                Curve curve2 = curves->transformer( query );
+                // Turn the curves into 'Curve' objects
+                Curve curve1 = curves->transformer(p);
+                Curve curve2 = curves->transformer(query);
                  
-                Frechet::Continuous::Distance dist = Frechet::Continuous::distance( curve1, curve2 );
+                Frechet::Continuous::Distance dist = Frechet::Continuous::distance(curve1, curve2);
                 b[id] = dist.value;
             }
         }
@@ -631,25 +628,3 @@ void DeallocateMemory()
     delete C_hashTables;
     delete curves;
 }
-
-//For Debug only
-// void LSHHashTable::printHash( )
-// {
-//     ofstream out("ids.txt");
-    
-//     for (int i = 0; i < L; i++)
-//     {
-//         out << "HashTable " << i << endl;
-//         for (int j = 0; j < TableSize; j++)
-//         {
-//             out << "Bucket " << j;
-//             for (int k = 0; k < LSH_hashTables[i][j].size(); k++)
-//             {
-//                 out << " | ID: " << LSH_hashTables[i][j][k].first << ", Item_id: " << LSH_hashTables[i][j][k].second->first;
-//             }
-//             out << endl;
-//         }
-//         out << "\n\n";
-//     }
-//     out.close();
-// }

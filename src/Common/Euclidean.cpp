@@ -11,7 +11,7 @@ double euclidean_distance(const vector<double> &p, const vector<double> &q)
     
     for(int i = 0; i < p.size(); i++)
     {
-        sum = sum + pow(abs( p[i] - q[i]), 2.0);
+        sum = sum + pow(abs(p[i] - q[i]), 2.0);
     }
     
     return sqrt(sum);

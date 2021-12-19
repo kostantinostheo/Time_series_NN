@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include "VectorData.h"
 #include "Euclidean.h"
 #include "Tools.h"
@@ -42,7 +41,7 @@ list<pair<string, vector<double>>> & VectorData::getBegin()
 }
 
 // Function that finds the real distances between query point 'q' and its N nearest neighbors using exhaustive search
-vector<pair<string, double>> VectorData::findRealDistBruteForce( vector<double> &q, int N )
+vector<pair<string, double>> VectorData::findRealDistBruteForce(vector<double> &q, int N)
 {
     vector<pair<string, double>> b;
     

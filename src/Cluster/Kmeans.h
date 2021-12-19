@@ -15,8 +15,8 @@ class Clusters
 {
     private:
         int k;  // Number of clusters
-        vector<vector<double>> centroids;    // Coordiantes of all centroids
-        vector<vector<pair<double, double> >> centroidsXY;    // Coordiantes of all centroids
+        vector<vector<double>> centroids;    // Coordinates of all centroids (1 dimension for each coordinate)
+        vector<vector<pair<double, double> >> centroidsXY;    // Coordiantes of all centroids (2 dimensions for each coordinate)
         vector<vector<pair<string, vector<double>> *>> clusters;  // k vectors that contain the points that belong in each cluster
     
     public:
@@ -33,7 +33,6 @@ class Clusters
         int getSecondClosestCentroid(vector<double>& p, int c, bool frechetOption=false);
         double avgDistanceBetweenPoints(vector<double>& p, int c, bool frechetOption=false);
         void Silhouette(string filename, bool complete, bool silhouette,bool frechetOption=false);
-        void printClusters();
 };
 
 extern Clusters *clust;

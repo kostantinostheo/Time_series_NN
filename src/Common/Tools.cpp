@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include "Tools.h"
 #include <iostream>
 
@@ -29,8 +28,6 @@ unsigned int HammingDistance(unsigned int a, unsigned int b)
 
     return bits;
 }
-
-
 
 // Function that finds the number of coordinates that a point has
 int dimension(string filename)

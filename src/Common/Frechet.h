@@ -11,4 +11,4 @@ double FrechetDistance(const vector<double> & P, const vector<double> & Q, doubl
 double FrechetDistance(const vector<pair<double, double>>& P, const vector<pair<double, double>>& Q);
 vector<pair<int, int>> OptimalTraversal(const vector<pair<double, double>>& P, const vector<pair<double, double>>& Q);
 
-#endif /* FRECHET_H */
+#endif
