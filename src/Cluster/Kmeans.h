@@ -7,6 +7,7 @@
 #include <cmath>
 #include <random>
 #include <ctime>
+#include <chrono>
 #include <fstream>
 
 using namespace std;
@@ -32,7 +33,7 @@ class Clusters
         bool updateCentroids(bool frechetOption=false);
         int getSecondClosestCentroid(vector<double>& p, int c, bool frechetOption=false);
         double avgDistanceBetweenPoints(vector<double>& p, int c, bool frechetOption=false);
-        void Silhouette(string filename, bool complete, bool silhouette,bool frechetOption=false);
+        void Silhouette(string filename, bool complete, bool silhouette, int clusterTime, bool frechetOption=false );
 };
 
 extern Clusters *clust;

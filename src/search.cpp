@@ -81,49 +81,65 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    cout << "inputFile: " << input_file << endl;
-    cout << "outputFile: " << out_file << endl;
-    cout << "queryFile: " << query_file << endl;
+    // cout << "inputFile: " << input_file << endl;
+    // cout << "outputFile: " << out_file << endl;
+    // cout << "queryFile: " << query_file << endl;
 
-    if (algorithm == "LSH")
+    while (1)
     {
-        cout << "Running LSH" << endl;
-        init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8);
-        LSH_pre_process(input_file, L);
-        lsh(query_file, out_file, 1);
-        DeallocateMemory();
-    }
-    else if (algorithm == "Hypercube")
-    {
-        cout << "Running Hypercube" << endl;
-        init_hashing_cube(k, dimension(input_file), pow(2,k));
-        Cube_pre_process(input_file, k);
-        cube(query_file, out_file, 1, k, M, probes);
-        DeallocateMemory();
-    }
-    else if (algorithm == "Frechet")
-    {
-        if(metric == "discrete")
+        if (algorithm == "LSH")
         {
-            cout << "Running Discrete Frechet" << endl;
-            init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8, delta);
-            CurvesLSH_pre_process(input_file, L);
-            lshCurvesDiscrete( query_file, out_file, 1, 1.0);
+            cout << "Running LSH" << endl;
+            init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8);
+            LSH_pre_process(input_file, L);
+            lsh(query_file, out_file, 1);
             DeallocateMemory();
         }
-        else if(metric == "continuous")
+        else if (algorithm == "Hypercube")
         {
-            cout << "Running Continuous Frechet" << endl;
-            init_hashing_lsh(k, 1, dimension(input_file), count_file_lines(input_file)/8, delta);
-            CurvesLSH_pre_process(input_file, 1, false);
-            lshCurvesContinuous( query_file, out_file, 1);
+            cout << "Running Hypercube" << endl;
+            init_hashing_cube(k, dimension(input_file), pow(2,k));
+            Cube_pre_process(input_file, k);
+            cube(query_file, out_file, 1, k, M, probes);
             DeallocateMemory();
         }
-       
+        else if (algorithm == "Frechet")
+        {
+            if(metric == "discrete")
+            {
+                cout << "Running Discrete Frechet" << endl;
+                init_hashing_lsh(k, L, dimension(input_file), count_file_lines(input_file)/8, delta);
+                CurvesLSH_pre_process(input_file, L);
+                lshCurvesDiscrete( query_file, out_file, 1, 1.0);
+                DeallocateMemory();
+            }
+            else if(metric == "continuous")
+            {
+                cout << "Running Continuous Frechet" << endl;
+                init_hashing_lsh(k, 1, dimension(input_file), count_file_lines(input_file)/8, delta);
+                CurvesLSH_pre_process(input_file, 1, false);
+                lshCurvesContinuous( query_file, out_file, 1);
+                DeallocateMemory();
+            }
+        
+        }
+        
+        char type;
+        cout << "Do you want to terminate? [y]es/[n]o: ";
+        cin >> type;
+
+        if(type == 'y')
+        {
+            cout << "Bye Bye..." << endl;;
+            return 0;
+        }
+        else
+        {
+            cout << "Set new [path for] input file: ";
+            cin >> input_file;
+            cout << "Set new [path for] query file: ";
+            cin >> query_file;
+        }
     }
-    
-    
-	
-    return 0;
 }
 

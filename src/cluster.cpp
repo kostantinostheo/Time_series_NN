@@ -68,9 +68,9 @@ int main(int argc, char** argv)
 
     readConfig(conf_file, num_clusters, L, num_hash, M, cube_dim, probes);
 
-    cout << "inputFile: " << input_file << endl;
-    cout << "outputFile: " << out_file << endl;
-    cout << "confFile: " << conf_file << endl;
+    // cout << "inputFile: " << input_file << endl;
+    // cout << "outputFile: " << out_file << endl;
+    // cout << "confFile: " << conf_file << endl;
 
     if (update == "Mean_Vector")
     {

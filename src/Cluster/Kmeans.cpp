@@ -10,9 +10,12 @@
 
 using namespace std;
 
-#define STOP 75
+#define _STOP_VECTOR 10
+#define _STOP_CURVE 100
 
 Clusters *clust;
+
+
 
 // Function that reads the configuration file
 void readConfig(string filename, int& num_clusters, int& L, int& num_hash, int& M, int& cube_dim, int& probes)
@@ -302,6 +305,7 @@ void Clusters::chooseNewCentroid(bool frechetOption)
 void Clusters::Lloyd(bool frechetOption)
 {
     bool b;
+    int loop = 0;
 
     if( !frechetOption ){
         do {
@@ -317,8 +321,9 @@ void Clusters::Lloyd(bool frechetOption)
             updateClustersFrechet();
             b = updateCentroids(true);
             cout << "updated center" << endl;
+            loop++;
 
-        } while(!b);
+        } while(!b && loop < 2);
     }
 }
 
@@ -347,11 +352,23 @@ bool Clusters::updateCentroids(bool frechetOption)
         }
     }
     
-    // If every old centroid has a distance less than 'STOP' from the new centroids then Lloyd's assignment ends
-    for (auto d : newDist) {
+    if(!frechetOption )
+    {
+    // If every old centroid has a distance less than '_STOP_VECTOR' from the new centroids then Lloyd's assignment ends
+        for (auto d : newDist) {
 
-        if(d > STOP)
-            return false;
+            if(d > _STOP_VECTOR)
+                return false;
+        }
+    }
+    else
+    {
+    // If every old centroid has a distance less than '_STOP_CURVE' from the new centroids then Lloyd's assignment ends
+        for (auto d : newDist) {
+
+            if(d > _STOP_CURVE)
+                return false;
+        }
     }
 
     return true;
@@ -481,15 +498,15 @@ int Clusters::getSecondClosestCentroid(vector<double>& p, int c, bool frechetOpt
         }
     }
     else {
-        double freq = curves->getFreq();
-        for (int i = 0; i < centroids.size(); i++)
+        for (int i = 0; i < centroidsXY.size(); i++)
         {
             // If this is the closest centroid then skip it
             // We need the second closest centroid
             if (i == c)
                 continue;
 
-            dist = FrechetDistance(p, centroids[i], freq);
+            
+            dist = FrechetDistance(curves->convertToYX(p), centroidsXY[i]);
 
             if (dist == 0)
                 continue;
@@ -534,7 +551,7 @@ double Clusters::avgDistanceBetweenPoints(vector<double>& p, int c, bool frechet
 }
 
 // Function that writes all the results in a file
-void Clusters::Silhouette(string filename, bool complete, bool silhouette, bool frechetOption)
+void Clusters::Silhouette(string filename, bool complete, bool silhouette, int clusterTime, bool frechetOption)
 {
     double ai = 0.0, bi = 0.0;
     unsigned int allPoints = 0;
@@ -598,6 +615,8 @@ void Clusters::Silhouette(string filename, bool complete, bool silhouette, bool 
 
         outputFile << "]}" << endl;
     }
+
+    outputFile << "clustering_time: " << clusterTime << endl;
     outputFile << endl;
 
     if (silhouette == true)
@@ -638,14 +657,20 @@ void Clusters::Silhouette(string filename, bool complete, bool silhouette, bool 
 // It also generates the output file with the results
 void cluster(string output, bool complete, bool silhouette, bool frechetOption)
 {
+    int clusterTime = 0;
+    auto start = chrono::steady_clock::now();
+
     // Find the first 'k' centroids with KMeans++
     clust->KMeans(frechetOption);
 
     // Using Lloyd's algorithm keep updating the centroids and assign the points to their nearest centroid
     clust->Lloyd(frechetOption);
 
+    auto end = chrono::steady_clock::now();
+    clusterTime += chrono::duration_cast<chrono::seconds>(end - start).count();
+
     // Create the output file and write all the results inside
-    clust->Silhouette(output, complete, silhouette, frechetOption);
+    clust->Silhouette(output, complete, silhouette, clusterTime, frechetOption);
 }
 
 void DeallocateMemoryClusters()
