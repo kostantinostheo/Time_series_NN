@@ -1,0 +1,73 @@
+Query: aer
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: abt
+True Nearest neighbor: abt
+distanceApproximate: 9.78618
+distanceTrue: 9.78618
+
+Query: aeri
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: aa
+True Nearest neighbor: abcb
+distanceApproximate: 22.6784
+distanceTrue: 17.1672
+
+Query: aes
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: abdc
+True Nearest neighbor: abdc
+distanceApproximate: 3.4488
+distanceTrue: 3.4488
+
+Query: aet
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: null
+True Nearest neighbor: aapl
+distanceApproximate: null
+distanceTrue: 27.694
+
+Query: aeti
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: acst
+True Nearest neighbor: acst
+distanceApproximate: 2.5653
+distanceTrue: 2.5653
+
+Query: aey
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: aau
+True Nearest neighbor: aau
+distanceApproximate: 1.882
+distanceTrue: 1.882
+
+Query: aezs
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: acta
+True Nearest neighbor: acad
+distanceApproximate: 67.3069
+distanceTrue: 38.4465
+
+Query: afam
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: acc
+True Nearest neighbor: abt
+distanceApproximate: 15.8278
+distanceTrue: 14.8876
+
+Query: afb
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: adx
+True Nearest neighbor: adx
+distanceApproximate: 3.01
+distanceTrue: 3.01
+
+Query: afc
+Algorithm: LSH_Frechet_Discrete
+Approximate Nearest neighbor: aeh
+True Nearest neighbor: aeh
+distanceApproximate: 1.194
+distanceTrue: 1.194
+
+tApproximateAverage: 609217 microseconds
+tTrueAverage: 4116385 microseconds
+MAF: 1.75066

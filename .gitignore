@@ -31,8 +31,8 @@
 *.out
 *.app
 
-# Ignore csv
-*.csv
+#ignore README.txt only
+*README.txt
 
 # Visual Studio
 *.vs
