@@ -9,11 +9,15 @@
 >>Αλγόριθμοι LSH & Hypercube για vectors.<br />
 >>Αλγόριθμος LSH για Discrete Frechet για curves.<br />
 >>Αλγόριθμος LSH για Continuous Frechet για curves.<br />
+
 >Ερώτημα B <br />
+
 >>Initialization:<br />
 >>>K-means++.<br />
+
 >>Αssignment:<br />
 >>>Lloyd's (Vector & Curves/Time series).<br />
+
 >>Update:<br />
 >>>Υπολογισμός της μέσης χρονοσειράς ως διάνυσμα.<br />
 >>>Υπολογισμός της μέσης χρονοσειράς ως καμπύλη.<br />
