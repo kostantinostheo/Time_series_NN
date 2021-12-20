@@ -6,17 +6,17 @@
 
 # Τα ερωτήματα που έχουν υλοποιηθεί:
 >Ερώτημα Α <br />
->>Αλγόριθμοι LSH & Hypercube για vectors.
->>Αλγόριθμος LSH για Discrete Frechet για curves.
->>Αλγόριθμος LSH για Continuous Frechet για curves.
+>>Αλγόριθμοι LSH & Hypercube για vectors.<br />
+>>Αλγόριθμος LSH για Discrete Frechet για curves.<br />
+>>Αλγόριθμος LSH για Continuous Frechet για curves.<br />
 >Ερώτημα B <br />
->>Initialization:
->>>K-means++.
->>Αssignment:
->>>Lloyd's (Vector & Curves/Time series).
->>Update:
->>>Υπολογισμός της μέσης χρονοσειράς ως διάνυσμα.
->>>Υπολογισμός της μέσης χρονοσειράς ως καμπύλη.
+>>Initialization:<br />
+>>>K-means++.<br />
+>>Αssignment:<br />
+>>>Lloyd's (Vector & Curves/Time series).<br />
+>>Update:<br />
+>>>Υπολογισμός της μέσης χρονοσειράς ως διάνυσμα.<br />
+>>>Υπολογισμός της μέσης χρονοσειράς ως καμπύλη.<br />
 
 <h3>Δομή αρχείων project:</h3>
 <p>Το project είναι υλοποιημένο και χωρισμένο σε modules. 
