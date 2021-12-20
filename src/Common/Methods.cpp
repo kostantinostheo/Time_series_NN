@@ -563,7 +563,6 @@ void lshCurvesContinuous(string input, string output, int N)
 
             // Find the N nearest neighbors using the ANN algorithm, their Frechet distance from 'q' and the time it takes to find them
             auto startLSH = chrono::steady_clock::now();
-            cout << id << endl;
             vector<pair<string, double>> nn = LSH_hashTables->LSH_findCurvedNN_Continuous (q, N);
             auto endLSH = chrono::steady_clock::now();
 
