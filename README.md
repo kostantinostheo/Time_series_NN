@@ -12,13 +12,13 @@ Compile και Execution:
 Question A: 
 >Compile with: **make search**
 >Execution 
->>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outLSH.txt -algorithm LSH
->>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outHypercube.txt -algorithm Hypercube
->>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outFrechetDiscrete.txt -algorithm Frechet -metric discrete -delta 1.0
->>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outFrechetContinuous.txt -algorithm Frechet -metric continuous -delta 1.0
+>>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outLSH.txt -algorithm LSH <br />
+>>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outHypercube.txt -algorithm Hypercube <br />
+>>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outFrechetDiscrete.txt -algorithm Frechet -metric discrete -delta 1.0<br />
+>>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outFrechetContinuous.txt -algorithm Frechet -metric continuous -delta 1.0<br />
 
 Question B: 
 >Compile with: **make cluster**
 >Execution 
->>./cluster -i dir/nasd_input.csv -c dir/cluster.conf -o dir/output/outClusterVector.txt -update Mean_Vector -assignment Classic -complete -silhouette
->>./cluster -i dir/nasd_input.csv -c dir/cluster.conf -o dir/output/outClusterFrechet.txt -update Mean_Frechet -assignment Classic -complete -silhouette
+>>./cluster -i dir/nasd_input.csv -c dir/cluster.conf -o dir/output/outClusterVector.txt -update Mean_Vector -assignment Classic -complete -silhouette<br />
+>>./cluster -i dir/nasd_input.csv -c dir/cluster.conf -o dir/output/outClusterFrechet.txt -update Mean_Frechet -assignment Classic -complete -silhouette<br />
