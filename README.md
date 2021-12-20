@@ -11,7 +11,7 @@
 
 <h3>Compile και Execution:</h3>
 
-<h4>Question A:</h4> 
+# Question A:
 >Compile with: **make search** <br />
 >Execution:
 >>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outLSH.txt -algorithm LSH <br />
@@ -19,7 +19,7 @@
 >>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outFrechetDiscrete.txt -algorithm Frechet -metric discrete -delta 1.0<br />
 >>./search -i dir/nasd_input.csv -q dir/nasd_query.csv -o dir/output/outFrechetContinuous.txt -algorithm Frechet -metric continuous -delta 1.0<br />
 
-<h4>Question B:</h4>  
+# Question B: 
 >Compile with: **make cluster**<br />
 >Execution:
 >>./cluster -i dir/nasd_input.csv -c dir/cluster.conf -o dir/output/outClusterVector.txt -update Mean_Vector -assignment Classic -complete -silhouette<br />
