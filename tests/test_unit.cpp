@@ -7,11 +7,11 @@
 using namespace std;
 
 void testFileDimension(void){
-    TEST_CHECK_(dimension("../../dir/nasd_input.csv") < 200, "Expected file dimension less than %d", 200);
+    TEST_CHECK_(dimension("dir/nasd_input.csv") < 800, "Expected file dimension less than %d", 800);
 }
 
 void countFileLines(void){
-    TEST_CHECK_(count_file_lines("../../dir/nasd_input.csv") < 200, "Expected file lines to be less than %d" , 200);
+    TEST_CHECK_(count_file_lines("dir/nasd_input.csv") < 200, "Expected file lines to be less than %d" , 200);
 }
 
 void testEuclideanDist(void) {
@@ -30,7 +30,7 @@ void testFrechetDist(void) {
 }
 
 TEST_LIST = {
-    {"'Input file dimensions must be less than 200'", testFileDimension},
+    {"'Input file dimensions must be less than 800'", testFileDimension},
     {"'Input file should have less than 200 lines'", countFileLines},
     {"'Euclidean distance of points (2, 6, 12) and (3, 4, 12) should be 3'", testEuclideanDist},
     {"'Frechet distance of curves ((0,3), (1,4)) and ((0,5), (1,8)) should be 4'", testFrechetDist},
