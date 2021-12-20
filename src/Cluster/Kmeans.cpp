@@ -320,7 +320,6 @@ void Clusters::Lloyd(bool frechetOption)
 
             updateClustersFrechet();
             b = updateCentroids(true);
-            cout << "updated center" << endl;
             loop++;
 
         } while(!b && loop < 2);
